@@ -236,11 +236,7 @@ def find_group(input_content):
     :param input_content: 需要解析的页面内容
     :return: 解析结果
     """
-    tmp = group.findall(input_content)
-    if tmp:
-        return tmp[0]
-    else:
-        return 'none'
+    return group.findall(input_content)
 
 
 def find_artists(input_content):
@@ -440,7 +436,7 @@ class Gallery:
         self.parody = []
         self.character = []
 
-        self.group = ''
+        self.group = []
         self.artist = []
 
         self.male_tag = []
@@ -1013,13 +1009,14 @@ if __name__ == '__main__':
         if os.path.exists(dic):
             with open(dic, 'rb') as file:
                 d = pickle.load(file)
-            disp = Dispatcher(d['root_path'], root_path, 2)
+            disp = Dispatcher(d['root_path'], root_path, 3)
             if disp.get_basic_info():
                 new = os.path.join(root_path, disp.gallery.name)
                 if disp.gallery.name != gall:
                     for file in os.listdir(now):
                         os.renames(os.path.join(now, file), os.path.join(new, file))
                     dic = os.path.join(new, 'gallery.dic')
+                    gall = disp.gallery.name
                 disp.start()
             else:
                 disp.done = True
@@ -1034,13 +1031,14 @@ if __name__ == '__main__':
         elif os.path.exists(pkl):
             with open(pkl, 'rb') as file:
                 d = pickle.load(file)
-            disp = Dispatcher(d['root_path'], root_path, 2)
+            disp = Dispatcher(d['root_path'], root_path, 3)
             if disp.get_basic_info():
                 new = os.path.join(root_path, disp.gallery.name)
                 if disp.gallery.name != gall:
                     for file in os.listdir(now):
                         os.renames(os.path.join(now, file), os.path.join(new, file))
                     dic = os.path.join(new, 'gallery.dic')
+                    gall = disp.gallery.name
                 disp.start()
             else:
                 disp.done = True

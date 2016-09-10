@@ -146,4 +146,4 @@ def scan(root, dst):
 
 
 if __name__ == '__main__':
-    scan(r'e:\right', r'e:\comic')
+    scan(r'd:\done', r'd:\comic')
