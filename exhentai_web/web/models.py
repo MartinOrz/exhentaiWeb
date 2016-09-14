@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.db import models
+from django.utils import timezone
 import os
 
 
@@ -29,7 +30,8 @@ languages = {
     'French': 7,
     'Thai': 8,
     'Polish': 9,
-    'Other': 10
+    'Other': 10,
+    'Portuguese': 11,
 }
 
 # 画集状态
@@ -89,7 +91,7 @@ class ExGallery(models.Model):
         code = int(root_path.split('/')[4])
         result.id = code
         result.root_path = root_path
-        result.save_path = os.path.join('{:0>3}'.format(code % 100), dic['name'])
+        result.save_path = os.path.join('{:0>3}'.format(code % 100), dic['name'] + '.zip')
         result.name = dic['name']
         result.name_n = dic['name_n']
         result.name_j = dic['name_j']
@@ -227,27 +229,9 @@ class ExTag(models.Model):
         return result
 
 
-def get_gallery_tag_relation(gallery_id, tag_id):
+class ExGalleryTagRelation(models.Model):
     """
-    获取一个画集与标签关联关系的实体类，分4张表，根据画集id分表
-    :param gallery_id:
-    :param tag_id:
-    :return:
-    """
-    mod = gallery_id % 4
-    if mod == 0:
-        return ExGalleryTagRelation0(gallery_id, tag_id)
-    elif mod == 1:
-        return ExGalleryTagRelation1(gallery_id, tag_id)
-    elif mod == 2:
-        return ExGalleryTagRelation2(gallery_id, tag_id)
-    else:
-        return ExGalleryTagRelation3(gallery_id, tag_id)
-
-
-class ExGalleryTagRelation0(models.Model):
-    """
-    用于存储画集与标签关系的表0
+    用于存储画集与标签关系的表
     """
     id = models.IntegerField(primary_key=True)
     gallery_id = models.IntegerField(db_index=True)
@@ -262,76 +246,8 @@ class ExGalleryTagRelation0(models.Model):
         :param tag_id: 标签id
         :return: 生成的ExGalleryTagRelation0实体类
         """
-        result = ExGalleryTagRelation0()
+        result = ExGalleryTagRelation()
         result.gallery_id = gallery_id
         result.tag_id = tag_id
         return result
 
-
-class ExGalleryTagRelation1(models.Model):
-    """
-    用于存储画集与标签关系的表1
-    """
-    id = models.IntegerField(primary_key=True)
-    gallery_id = models.IntegerField(db_index=True)
-    tag_id = models.IntegerField(db_index=True)
-
-    @staticmethod
-    def get_object(gallery_id, tag_id):
-        """
-        根据给定的名称生成一个ExGalleryTagRelation1
-
-        :param gallery_id: 画集id
-        :param tag_id: 标签id
-        :return: 生成的ExGalleryTagRelation1实体类
-        """
-        result = ExGalleryTagRelation1()
-        result.gallery_id = gallery_id
-        result.tag_id = tag_id
-        return result
-
-
-class ExGalleryTagRelation2(models.Model):
-    """
-    用于存储画集与标签关系的表2
-    """
-    id = models.IntegerField(primary_key=True)
-    gallery_id = models.IntegerField(db_index=True)
-    tag_id = models.IntegerField(db_index=True)
-
-    @staticmethod
-    def get_object(gallery_id, tag_id):
-        """
-        根据给定的名称生成一个ExGalleryTagRelation2
-
-        :param gallery_id: 画集id
-        :param tag_id: 标签id
-        :return: 生成的ExGalleryTagRelation2实体类
-        """
-        result = ExGalleryTagRelation2()
-        result.gallery_id = gallery_id
-        result.tag_id = tag_id
-        return result
-
-
-class ExGalleryTagRelation3(models.Model):
-    """
-    用于存储画集与标签关系的表3
-    """
-    id = models.IntegerField(primary_key=True)
-    gallery_id = models.IntegerField(db_index=True)
-    tag_id = models.IntegerField(db_index=True)
-
-    @staticmethod
-    def get_object(gallery_id, tag_id):
-        """
-        根据给定的名称生成一个ExGalleryTagRelation3
-
-        :param gallery_id: 画集id
-        :param tag_id: 标签id
-        :return: 生成的ExGalleryTagRelation3实体类
-        """
-        result = ExGalleryTagRelation3()
-        result.gallery_id = gallery_id
-        result.tag_id = tag_id
-        return result
