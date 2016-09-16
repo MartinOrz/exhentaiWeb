@@ -2,6 +2,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
 from web.models import ExGallery
 from web.models import ExAuthor
 from web.models import ExGalleryAuthorRelation
@@ -12,15 +13,118 @@ from web.models import ExGalleryTagRelation
 from web.models import tag_types
 from django.db import transaction
 import os
+import random
 import pickle
 import zipfile
 import threading
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'e:\import'
-DST_DICT = r'e:\comic'
+IMPORT_DICT = r'g:\import'
+DST_DICT = r'g:\comic'
 MAX_INSERT = 100
+
+
+# 一些基本方法的定义 ======================================================================================================
+def _get_success_json(data):
+    """
+    获取一个正确的Json格式相应
+
+    :param data: 信息
+    :return: JsonResponse
+    """
+    data = {'success': True, 'data': data}
+    return JsonResponse(data=data)
+
+
+def _get_error_json(data):
+    """
+    获取一个错误的Json格式相应
+
+    :param data: 信息
+    :return: JsonResponse
+    """
+    data = {'success': False, 'data': data}
+    return JsonResponse(data=data)
+
+
+# 画集显示相关请求 =======================================================================================================
+def get_gallery_info(request, gall):
+    """
+    获取画集信息，包含作者，tag信息等
+    :param request:
+    :param gall:
+    :return:
+    """
+    try:
+        gid = id=int(gall)
+        # 先获取画集信息
+        gallery = ExGallery.objects.get(id=gid)
+        result = gallery.to_dict()
+
+        # Group信息
+        g_relations = ExGalleryGroupRelation.objects.filter(gallery_id=gid)
+        group_ids = [relation.group_id for relation in g_relations]
+        groups = ExGroup.objects.filter(id__in=group_ids)
+        result['group'] = [group.to_dict() for group in groups]
+
+        # Author信息
+        a_relations = ExGalleryAuthorRelation.objects.filter(gallery_id=gid)
+        author_ids = [relation.author_id for relation in a_relations]
+        authors = ExAuthor.objects.filter(id__in=author_ids)
+        result['author'] = [author.to_dict() for author in authors]
+
+        # Tag信息
+        t_relations = ExGalleryTagRelation.objects.filter(gallery_id=gid)
+        tag_ids = [relation.tag_id for relation in t_relations]
+        tags = ExTag.objects.filter(id__in=tag_ids)
+        result['tag'] = [tag.to_dict() for tag in tags]
+        return _get_success_json(result)
+    except Exception as e:
+        return _get_error_json(None)
+
+
+def get_gallery_id(request):
+    """
+    获取一个画集的id
+
+    :param request: 请求
+    :get_param status: 画集状态
+    :get_param random: 是否随机选取，0为否，否则为是
+    :return: 选取到的画集id
+    """
+    try:
+        status = int(request.GET['status']) if 'status' in request.GET else -1
+        rand = bool(request.GET['random']) if 'random' in request.GET else False
+        galls = ExGallery.objects.all() if status < 0 else ExGallery.objects.filter(status=status)
+        result = galls.order_by('?')[0].id if rand else galls[0].id
+        return _get_success_json(result)
+    except Exception as e:
+        print(e)
+        return _get_error_json(None)
+
+
+
+def get_gallery_img(request, gall, img):
+    """
+    获取一张图片, REST路径为 '/画集id/图片页码'
+
+    :param request: http请求
+    :param gall: 画集id
+    :param img: 图片页码
+    :return: 正确则返回图像，否则返回错误图像
+    """
+    try:
+        gallery = ExGallery.objects.get(id=int(gall))
+        file = os.path.join(DST_DICT, gallery.save_path)
+        with zipfile.ZipFile(file, mode='r', compression=zipfile.ZIP_STORED) as zip_file:
+            for zfile in zip_file.namelist():
+                if zfile.startswith(img):
+                    return HttpResponse(zip_file.read(zfile), content_type='image/' + zfile.split('.')[-1])
+    except Exception as e:
+        print(e)
+    with open('resources/err_img.png', 'rb') as file:
+        return HttpResponse(file.read(), content_type='image/png')
 
 
 def import_galleries(request):

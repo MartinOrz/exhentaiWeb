@@ -19,6 +19,19 @@ types = {
     'misc': 10,
 }
 
+display_types = {
+    1: '同人志',
+    2: '漫画',
+    3: '同人CG集',
+    4: '游戏CG集',
+    5: '西方画集',
+    6: '非H向',
+    7: '套图',
+    8: 'cosplay',
+    9: '亚洲色情',
+    10: '其他',
+}
+
 # 语言
 languages = {
     'Japanese': 1,
@@ -34,11 +47,32 @@ languages = {
     'Portuguese': 11,
 }
 
+display_languages = {
+    1: '日文',
+    2: '中文',
+    3: '英文',
+    4: '韩文',
+    5: '西班牙文',
+    6: '俄罗斯文',
+    7: '法文',
+    8: '泰文',
+    9: '波兰文',
+    10: '其他',
+    11: '葡萄牙文',
+}
+
 # 画集状态
 status = {
     'not_downloaded': 0,
     'downloaded': 1,
-    'deleted': 2,
+    'checked': 2,
+    'deleted': 3,
+}
+
+display_status = {
+    1: '未下载',
+    2: '已下载',
+    3: '已删除',
 }
 
 DEFAULT_STATUS = 'downloaded'
@@ -74,6 +108,29 @@ class ExGallery(models.Model):
     rating = models.IntegerField()
     status = models.IntegerField()
     last_view = models.DateTimeField()
+
+    def to_dict(self):
+        """
+        将自身变形成为一个字典
+
+        :return: 变形的字典
+        """
+        result = dict()
+        result['id'] = self.id
+        result['root_path'] = self.root_path
+        result['name'] = self.name
+        result['name_n'] = self.name_n
+        result['name_j'] = self.name_j
+        result['type'] = display_types[self.type]
+        result['language'] = display_languages[self.language]
+        result['translator'] = self.translator
+        result['length'] = self.length
+        result['posted'] = self.posted
+        result['is_anthology'] = self.is_anthology
+        result['rating'] = self.rating
+        result['status'] = self.status
+        result['last_view'] = self.last_view
+        return result
 
     @staticmethod
     def get_object(dic):
@@ -117,6 +174,20 @@ class ExAuthor(models.Model):
     text = models.CharField(max_length=255)
     refer = models.IntegerField()
     rating = models.IntegerField()
+
+    def to_dict(self):
+        """
+        将自身变形成为一个字典
+
+        :return: 变形得到的字典
+        """
+        result = dict()
+        result['id'] = self.id
+        result['name'] = self.name
+        result['text'] = self.text
+        result['refer'] = self.refer
+        result['rating'] = self.rating
+        return result
 
     @staticmethod
     def get_object(name):
@@ -166,6 +237,18 @@ class ExGroup(models.Model):
     text = models.CharField(max_length=255)
     rating = models.IntegerField()
 
+    def to_dict(self):
+        """
+        将自身变形成为一个字典
+
+        :return: 变形得到的字典
+        """
+        result = dict()
+        result['name'] = self.name
+        result['text'] = self.text
+        result['rating'] = self.rating
+        return result
+
     @staticmethod
     def get_object(name):
         """
@@ -212,6 +295,19 @@ class ExTag(models.Model):
     name = models.CharField(max_length=255)
     text = models.CharField(max_length=255)
     type = models.IntegerField(db_index=True)
+
+    def to_dict(self):
+        """
+        将自身变形成为一个字典
+
+        :return: 变形得到的字典
+        """
+        result = dict()
+        result['id'] = self.id
+        result['name'] = self.name
+        result['text'] = self.text
+        result['type'] = self.type
+        return result
 
     @staticmethod
     def get_object(name, type_name):

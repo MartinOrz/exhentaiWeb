@@ -18,6 +18,14 @@ from django.contrib import admin
 from web import views
 
 urlpatterns = [
-    url(r'^import/$', views.import_galleries),
     url(r'^admin/', admin.site.urls),
+
+    # 获取画集信息
+    url(r'gallery/id/$', views.get_gallery_id, name='get_gallery_id'),  # 获取随机画集id
+
+    url(r'^gallery/(\d+)/$', views.get_gallery_info, name='get_gallery_info'),  # 根据id获取画集信息
+    url(r'^gallery/(\d+)/(\d+)/$', views.get_gallery_img, name='get_gallery_img'),  # 根据id及页码获取图片
+
+    # 导入画集
+    url(r'^import/$', views.import_galleries),
 ]
