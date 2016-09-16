@@ -13,15 +13,14 @@ from web.models import ExGalleryTagRelation
 from web.models import tag_types
 from django.db import transaction
 import os
-import random
 import pickle
 import zipfile
 import threading
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'g:\import'
-DST_DICT = r'g:\comic'
+IMPORT_DICT = r'e:\import'
+DST_DICT = r'e:\comic'
 MAX_INSERT = 100
 
 
@@ -46,6 +45,11 @@ def _get_error_json(data):
     """
     data = {'success': False, 'data': data}
     return JsonResponse(data=data)
+
+
+# 页面请求 ==============================================================================================================
+def image_page(request):
+    return render(request, 'image.html')
 
 
 # 画集显示相关请求 =======================================================================================================
