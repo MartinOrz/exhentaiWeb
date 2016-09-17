@@ -19,8 +19,8 @@ import threading
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'e:\import'
-DST_DICT = r'e:\comic'
+IMPORT_DICT = r'g:\import'
+DST_DICT = r'g:\comic'
 MAX_INSERT = 100
 
 
@@ -47,11 +47,6 @@ def _get_error_json(data):
     return JsonResponse(data=data)
 
 
-# 页面请求 ==============================================================================================================
-def image_page(request):
-    return render(request, 'image.html')
-
-
 # 画集显示相关请求 =======================================================================================================
 def get_gallery_info(request, gall):
     """
@@ -64,26 +59,35 @@ def get_gallery_info(request, gall):
         gid = id=int(gall)
         # 先获取画集信息
         gallery = ExGallery.objects.get(id=gid)
-        result = gallery.to_dict()
 
-        # Group信息
-        g_relations = ExGalleryGroupRelation.objects.filter(gallery_id=gid)
-        group_ids = [relation.group_id for relation in g_relations]
-        groups = ExGroup.objects.filter(id__in=group_ids)
-        result['group'] = [group.to_dict() for group in groups]
+        result = dict()
+        result['title'] = gallery.name  # 页面标题
+        result['id'] = gallery.id  # 画集id，作为全局变量存储
+        result['length'] = gallery.length  # 画集长度，作为全局变量存储
+        result['name_n'] = gallery.name_n  # 名称
+        result['name_j'] = gallery.name_j  # 日文名称
 
-        # Author信息
-        a_relations = ExGalleryAuthorRelation.objects.filter(gallery_id=gid)
-        author_ids = [relation.author_id for relation in a_relations]
-        authors = ExAuthor.objects.filter(id__in=author_ids)
-        result['author'] = [author.to_dict() for author in authors]
-
-        # Tag信息
-        t_relations = ExGalleryTagRelation.objects.filter(gallery_id=gid)
-        tag_ids = [relation.tag_id for relation in t_relations]
-        tags = ExTag.objects.filter(id__in=tag_ids)
-        result['tag'] = [tag.to_dict() for tag in tags]
-        return _get_success_json(result)
+        result['first_page'] = 1
+        result['first_page_url'] = 'http://localhost:8080/gallery/' + str(gallery.id) + '/1'
+        #
+        # # Group信息
+        # g_relations = ExGalleryGroupRelation.objects.filter(gallery_id=gid)
+        # group_ids = [relation.group_id for relation in g_relations]
+        # groups = ExGroup.objects.filter(id__in=group_ids)
+        # result['group'] = [group.to_dict() for group in groups]
+        #
+        # # Author信息
+        # a_relations = ExGalleryAuthorRelation.objects.filter(gallery_id=gid)
+        # author_ids = [relation.author_id for relation in a_relations]
+        # authors = ExAuthor.objects.filter(id__in=author_ids)
+        # result['author'] = [author.to_dict() for author in authors]
+        #
+        # # Tag信息
+        # t_relations = ExGalleryTagRelation.objects.filter(gallery_id=gid)
+        # tag_ids = [relation.tag_id for relation in t_relations]
+        # tags = ExTag.objects.filter(id__in=tag_ids)
+        # result['tag'] = [tag.to_dict() for tag in tags]
+        return render(request, 'gallery.html', result)
     except Exception as e:
         return _get_error_json(None)
 
@@ -108,7 +112,6 @@ def get_gallery_id(request):
         return _get_error_json(None)
 
 
-
 def get_gallery_img(request, gall, img):
     """
     获取一张图片, REST路径为 '/画集id/图片页码'
@@ -121,6 +124,7 @@ def get_gallery_img(request, gall, img):
     try:
         gallery = ExGallery.objects.get(id=int(gall))
         file = os.path.join(DST_DICT, gallery.save_path)
+        img = "{:0>3}".format(img)
         with zipfile.ZipFile(file, mode='r', compression=zipfile.ZIP_STORED) as zip_file:
             for zfile in zip_file.namelist():
                 if zfile.startswith(img):

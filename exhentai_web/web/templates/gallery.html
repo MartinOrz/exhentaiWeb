@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ title }}</title>
+<link rel="stylesheet" type="text/css" href="../../static/css/style.css" />
+<script type="text/javascript" src="../../static/js/jquery-3.1.0.min.js"></script>
+<script type="text/javascript">
+    var gid = {{ id }}
+    var length = {{ length }}
+    var now = {{ first_page }}
+    $(document).ready(function() {
+        $("img#i").bind("click", function(){
+            now += 1
+            if (now <= length) {
+                $(this).attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
+            }
+            if (now +1 <= length) {
+                $("img#ip1").attr("src", "http://localhost:8080/gallery/" + gid + "/" + (now + 1));
+            }
+            if (now +2 <= length) {
+                $("img#ip1").attr("src", "http://localhost:8080/gallery/" + gid + "/" + (now + 2));
+            }
+        });
+    });
+</script>
+</head>
+<body style="text-align:center">
+<div id="header">
+    <h1>{{ name_n }}</h1>
+    <h1>{{ name_j }}</h1>
+</div>
+<div id="image">
+    <image id="i" src="{{ first_page_url }}"/>
+</div>
+<div class="left" id="info">
+<table>
+    <tbody>
+    <tr>
+        <td
+    </tr>
+    </tbody>
+</table>
+</div>
+<div class="preload"><img id="ip1"><img id="ip2"></div>
+<div id="controls">
+</div>
+</body>
+
+</html>

@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import django.views.static
+from exhentai_web import settings
 from web import views
 
 urlpatterns = [
@@ -22,11 +24,12 @@ urlpatterns = [
 
     # 获取画集信息
     url(r'gallery/id/$', views.get_gallery_id, name='get_gallery_id'),  # 获取随机画集id
-
-    url(r'^galleryHome$', views.image_page, name='image_page'),
     url(r'^gallery/(\d+)/$', views.get_gallery_info, name='get_gallery_info'),  # 根据id获取画集信息
     url(r'^gallery/(\d+)/(\d+)/$', views.get_gallery_img, name='get_gallery_img'),  # 根据id及页码获取图片
 
     # 导入画集
     url(r'^import/$', views.import_galleries),
+
+    # 静态文件
+    url( r'^static/(?P<path>.*)$', django.views.static.serve, {'document_root':settings.STATICFILES_DIRS}),
 ]
