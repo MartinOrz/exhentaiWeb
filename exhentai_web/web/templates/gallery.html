@@ -5,22 +5,59 @@
 <title>{{ title }}</title>
 <link rel="stylesheet" type="text/css" href="../../static/css/style.css" />
 <script type="text/javascript" src="../../static/js/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="../../static/js/common.js"></script>
 <script type="text/javascript">
     var gid = {{ id }}
     var length = {{ length }}
     var now = {{ first_page }}
     $(document).ready(function() {
+        var csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
         $("img#i").bind("click", function(){
-            now += 1
-            if (now <= length) {
+            if (now < length) {
+                now += 1
+                $("span#now").html(now)
                 $(this).attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
             }
-            if (now +1 <= length) {
-                $("img#ip1").attr("src", "http://localhost:8080/gallery/" + gid + "/" + (now + 1));
+        });
+        $("img#f").bind("click", function(){
+            now = 1
+            $("span#now").html(now)
+            $("img#i").attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
+        });
+        $("img#p").bind("click", function(){
+            if (now > 1) {
+                now -= 1
+                $("span#now").html(now)
+                $("img#i").attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
             }
-            if (now +2 <= length) {
-                $("img#ip1").attr("src", "http://localhost:8080/gallery/" + gid + "/" + (now + 2));
+        });
+        $("img#n").bind("click", function(){
+            if (now < length) {
+                now += 1
+                $("span#now").html(now)
+                $("img#i").attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
             }
+        });
+        $("img#l").bind("click", function(){
+            now = length
+            $("span#now").html(now)
+            $("img#i").attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
+        });
+        $("button#delete").click(function(){
+            $.ajax({
+                url: "/gallery/" + gid,
+                type: "DELETE",
+                success: function(result) {
+                    // Do something with the result
+                }
+            });
         });
     });
 </script>
@@ -30,20 +67,105 @@
     <h1>{{ name_n }}</h1>
     <h1>{{ name_j }}</h1>
 </div>
-<div id="image">
-    <image id="i" src="{{ first_page_url }}"/>
+<div class="gm">
+    <div id="gmid">
+        <div id="gd3">
+            <div id="gdd">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="gdt1">
+                                Language:
+                            </td>
+                            <td class="gdt2">
+                                Chinese
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="gdt1">
+                                Length:
+                            </td>
+                            <td class="gdt2">
+                                672 pages
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="grt1">
+                                Rating:
+                            </td>
+                            <td id="grt3">
+                                <span id="rating_count">
+                                    347
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="gd4">
+            <div id="taglist">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="tc">
+                                artist:
+                            </td>
+                            <td>
+                                <div id="td_artist:butcherboy" class="gt" style="opacity:1.0">butcherboy</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tc">
+                                male:
+                            </td>
+                            <td>
+                                <div id="td_male:blood" class="gtl" style="opacity:1.0">blood</div>
+                                <div id="td_male:glasses" class="gt" style="opacity:1.0">glasses</div>
+                                <div id="td_male:snuff" class="gt" style="opacity:1.0">snuff</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tc">
+                                female:
+                            </td>
+                            <td>
+                                <div id="td_female:big_breasts" class="gt" style="opacity:1.0">big breasts</div>
+                                <div id="td_female:cheating" class="gt" style="opacity:1.0">cheating</div>
+                                <div id="td_female:milf" class="gt" style="opacity:1.0">milf</div>
+                                <div id="td_female:snuff" class="gt" style="opacity:1.0">snuff</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tc">
+                                misc:
+                            </td>
+                            <td>
+                                <div id="td_full_censorship" class="gt" style="opacity:1.0">full censorship</div>
+                                <div id="td_full_color" class="gt" style="opacity:1.0">full color</div>
+                                <div id="td_story_arc" class="gt" style="opacity:1.0">story arc</div>
+                                <div id="td_webtoon" class="gt" style="opacity:1.0">webtoon</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="left" id="info">
-<table>
-    <tbody>
-    <tr>
-        <td
-    </tr>
-    </tbody>
-</table>
-</div>
-<div class="preload"><img id="ip1"><img id="ip2"></div>
-<div id="controls">
+<div id="i1" class="sni" style="width:1300px">
+    <div id="i3">
+        <image id="i" src="{{ first_page_url }}"/>
+    </div>
+    <div id="i4">
+        <div class="sn">
+            <img id="f" src="../../static/resources/first_page.png" />
+            <img id="p" src="../../static/resources/pre_page.png" />
+            <div><span id="now">1</span> / <span>{{ length }}</span></div>
+            <img id="n" src="../../static/resources/next_page.png" />
+            <img id="l" src="../../static/resources/last_page.png" />
+        </div>
+    </div>
 </div>
 </body>
 

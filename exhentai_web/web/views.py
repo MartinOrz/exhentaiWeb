@@ -2,6 +2,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import HttpResponseNotAllowed
 from django.http import JsonResponse
 from web.models import ExGallery
 from web.models import ExAuthor
@@ -11,7 +12,11 @@ from web.models import ExGalleryGroupRelation
 from web.models import ExTag
 from web.models import ExGalleryTagRelation
 from web.models import tag_types
+from web.models import tag_types
+from web.models import status
 from django.db import transaction
+from datetime import datetime
+from exhentai_web import settings
 import os
 import pickle
 import zipfile
@@ -22,7 +27,7 @@ import threading
 IMPORT_DICT = r'g:\import'
 DST_DICT = r'g:\comic'
 MAX_INSERT = 100
-
+STATICFILES_DIRS =settings.STATICFILES_DIRS[0]
 
 # 一些基本方法的定义 ======================================================================================================
 def _get_success_json(data):
@@ -47,6 +52,22 @@ def _get_error_json(data):
     return JsonResponse(data=data)
 
 
+def method_dispatch(**table):
+    """
+    根据http谓词进行方法路由
+
+    :param table: 谓词-方法表
+    :return: 相应结果
+    """
+    def invalid_method(request, *args, **kwargs):
+        return HttpResponseNotAllowed(table.keys())
+
+    def d(request, *args, **kwargs):
+        handler = table.get(request.method, invalid_method)
+        return handler(request, *args, **kwargs)
+    return d
+
+
 # 画集显示相关请求 =======================================================================================================
 def get_gallery_info(request, gall):
     """
@@ -66,6 +87,8 @@ def get_gallery_info(request, gall):
         result['length'] = gallery.length  # 画集长度，作为全局变量存储
         result['name_n'] = gallery.name_n  # 名称
         result['name_j'] = gallery.name_j  # 日文名称
+        result['language'] = gallery.language
+        result['posted'] = gallery.posted
 
         result['first_page'] = 1
         result['first_page_url'] = 'http://localhost:8080/gallery/' + str(gallery.id) + '/1'
@@ -92,6 +115,51 @@ def get_gallery_info(request, gall):
         return _get_error_json(None)
 
 
+@transaction.atomic
+def update_gallery(request, gall):
+    """
+    修改画集属性，只有 status, translator, rating, last_view. 由于django不能支持http put,因此使用post
+
+    :param gall: 画集id
+    :return: 是否成功
+    """
+    try:
+        gid = int(gall)
+        gallery = ExGallery.objects.get(id=gid)
+        if 'status' in request.POST:
+            gallery.status = status.get(request.POST, gallery.status)
+        if 'translator' in request.POST and not request.POST['translator'].strip():
+            gallery.translator = request.POST['translator']
+        if 'rating' in request.POST:
+            rating = min(100, max(0, int(request.POST['rating'])))
+        gallery.last_view = datetime.now()
+        return _get_success_json(None)
+    except Exception as e:
+        return _get_error_json(None)
+
+
+@transaction.atomic
+def delete_gallery(request, gall):
+    """
+    删除一个画集，删除时会更新画集的信息，同时从物理上彻底删除画集zip文件
+
+    :param gall: 画集id
+    :return: 是否成功
+    """
+    try:
+        gid = int(gall)
+        # 先获取画集信息
+        gallery = ExGallery.objects.get(id=gid)
+        gallery.status = status['deleted']
+        gallery.save()
+        file = os.path.join(DST_DICT, gallery.save_path)
+        if os.path.exists(file):
+            os.remove(file)
+        return _get_success_json(None)
+    except Exception as e:
+        return _get_error_json(None)
+
+
 def get_gallery_id(request):
     """
     获取一个画集的id
@@ -108,7 +176,6 @@ def get_gallery_id(request):
         result = galls.order_by('?')[0].id if rand else galls[0].id
         return _get_success_json(result)
     except Exception as e:
-        print(e)
         return _get_error_json(None)
 
 
@@ -130,8 +197,8 @@ def get_gallery_img(request, gall, img):
                 if zfile.startswith(img):
                     return HttpResponse(zip_file.read(zfile), content_type='image/' + zfile.split('.')[-1])
     except Exception as e:
-        print(e)
-    with open('resources/err_img.png', 'rb') as file:
+        pass
+    with open(os.path.join(STATICFILES_DIRS, 'resources', 'err_img.png'), 'rb') as file:
         return HttpResponse(file.read(), content_type='image/png')
 
 

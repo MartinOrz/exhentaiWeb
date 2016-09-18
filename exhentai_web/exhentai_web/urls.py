@@ -23,7 +23,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     # 获取画集信息
-    url(r'gallery/id/$', views.get_gallery_id, name='get_gallery_id'),  # 获取随机画集id
+    url(r'gallery/(\d+)/$', views.method_dispatch(GET=views.get_gallery_info,
+                                                  POST=views.update_gallery,
+                                                  DELETE=views.delete_gallery), name='gallery'),
     url(r'^gallery/(\d+)/$', views.get_gallery_info, name='get_gallery_info'),  # 根据id获取画集信息
     url(r'^gallery/(\d+)/(\d+)/$', views.get_gallery_img, name='get_gallery_img'),  # 根据id及页码获取图片
 
