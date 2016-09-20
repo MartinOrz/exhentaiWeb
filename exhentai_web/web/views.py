@@ -14,6 +14,7 @@ from web.models import ExGalleryTagRelation
 from web.models import tag_types
 from web.models import tag_types
 from web.models import status
+from web.models import display_languages
 from django.db import transaction
 from datetime import datetime
 from exhentai_web import settings
@@ -24,10 +25,11 @@ import threading
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'g:\import'
-DST_DICT = r'g:\comic'
+IMPORT_DICT = r'e:\import'
+DST_DICT = r'e:\comic'
 MAX_INSERT = 100
 STATICFILES_DIRS =settings.STATICFILES_DIRS[0]
+
 
 # 一些基本方法的定义 ======================================================================================================
 def _get_success_json(data):
@@ -87,7 +89,8 @@ def get_gallery_info(request, gall):
         result['length'] = gallery.length  # 画集长度，作为全局变量存储
         result['name_n'] = gallery.name_n  # 名称
         result['name_j'] = gallery.name_j  # 日文名称
-        result['language'] = gallery.language
+        result['language'] = display_languages[gallery.language]
+        result['rating'] = gallery.rating
         result['posted'] = gallery.posted
 
         result['first_page'] = 1

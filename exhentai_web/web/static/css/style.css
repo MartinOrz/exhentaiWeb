@@ -1,60 +1,15 @@
-/* header */
-div#header {font-size:15px}
-
-/* preload */
-div.preload {width:100px;height:5px;background:green;display:none}
-
 /* misc */
-body{font-size:8pt;font-family:arial,helvetica,sans-serif;color:#f1f1f1;background:#34353b;padding:2px;margin:0px}
+html {height:100%;margin:0;}
+body{height:100%;font-size:8pt;font-family:arial,helvetica,sans-serif;color:#f1f1f1;background:#34353b;padding:2px;margin:0px}
+
 p{padding:3px 1px;margin:0}
 img{border:0}
 
-/* gallery table */
-tr.gtr{background:#40454b}
-tr.gtr0{background:#4f535b}
-tr.gtr1{background:#363940}
+div#info {height:100%;width:200px;height:100%;margin:0;float:left;background:#4f535b;font-size:12pt;overflow:hidden}
+div#info span {width:100%;font-weight:bold;padding:10px}
+td.tdl {font-weight:bold}
 
-/* gallery */
-div.gm{background:#4f535b;border:1px solid #000000;text-align:justify;width:99%;min-width:720px;max-width:1200px;margin:10px auto;padding:3px 5px;position:relative}
-div#gmid{width:765px;height:330px;position:relative;background:#4f535b;z-index:2}
-div#gd3{font-size:8pt;float:left;width:170px;padding:3px 0 0;margin:0}
-div#gd4{font-size:8pt;float:left;width:560px;padding:0 0 0 5px;margin:0 0 0 10px;vertical-align:top;border-left:1px solid #000000;border-right:1px solid #000000}
-div#gdt{background:#4f535b;border:1px solid #000000;text-align:left;width:99%;min-width:720px;max-width:1200px;margin:0 auto;clear:both;padding:5px}
-div.gdtm{text-align:center;float:left;margin:2px 0px;width:120px}
-div.gdtl{text-align:center;float:left;margin:2px 0px;width:239px}
-div#gdt img{border:1px solid #000000;margin:0px;padding:0px}
-div#gdt a{text-decoration:none}
-div#gdd{width:170px;margin:12px auto 0px;font-size:9pt}
-div#gdd table{width:170px;text-align:left;margin:15px auto;padding:0}
-td.gdt1{font-weight:bold;border-spacing:3px 0;height:17px;white-space:nowrap}
-td.gdt2{padding-left:3px;height:17px;white-space:nowrap}
-td#grt1{width:35%;padding:0}
-td#grt3{width:35%;padding:0}
-div.gt{float:left;font-weight:bold;padding:1px 4px;margin:0 2px 5px 2px;white-space:nowrap;position:relative;border-radius:5px;border:1px solid #989898;background:#4f535b}
-div.gtl{float:left;font-weight:bold;padding:1px 4px;margin:0 2px 5px 2px;white-space:nowrap;position:relative;border-radius:5px;border:1px dashed #8c8c8c;background:#4f535b}
-td.tc{text-align:right;font-family:verdana;padding-top:3px;vertical-align:top}
-div#taglist{overflow:auto;height:295px;width:100%;padding:2px 0 2px 3px;font-size:9pt}
-div#taglist a{text-decoration:none}
-
-@media screen and (max-width:1230px) {
-    div#gd1{display:none !important}
-	div.gm{max-width:960px}
-	div#gdt{max-width:960px}
-}
-
-@media screen and (max-width:990px) {
-	p.gpc{margin-top:25px;visibility:hidden !important}
-	div.gm{max-width:720px}
-	div#gdt{max-width:720px}
-	div#gd4{width:340px}
-	div#gmid{width:545px}
-}
-
-/* image pages */
-div.sni{background:#4f535b;border:1px solid #000000;text-align:center;margin:2px auto 6px;padding:0 5px 5px;min-width:720px;position:relative;z-index:1}
-div.sni h1{font-size:12pt;font-weight:bold;text-align:center}
-div.sni img{border:0;vertical-align:middle;margin:1px;clear:both}
-div.sn{margin:1px auto;font-size:10pt;height:32px;z-index:1}
-div.sn div{margin:2px 25px 0px;display:inline}
-div.sn span{font-weight:bold}
-div.sn img{width:30px;height:30px;padding:0px 2px}
+div#image {margin-left:200px;height:100%;min-width:720px;background:red}
+div#header {font-size:10pt;width:100%}
+div#comic_img {width:100%}
+div#comic_img img {width:100%}
