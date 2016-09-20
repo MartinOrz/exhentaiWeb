@@ -25,8 +25,8 @@ import threading
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'e:\import'
-DST_DICT = r'e:\comic'
+IMPORT_DICT = r'g:\import'
+DST_DICT = r'g:\comic'
 MAX_INSERT = 100
 STATICFILES_DIRS =settings.STATICFILES_DIRS[0]
 
@@ -91,7 +91,7 @@ def get_gallery_info(request, gall):
         result['name_j'] = gallery.name_j  # 日文名称
         result['language'] = display_languages[gallery.language]
         result['rating'] = gallery.rating
-        result['posted'] = gallery.posted
+        result['posted'] = gallery.posted.strftime("%Y-%m-%d")
 
         result['first_page'] = 1
         result['first_page_url'] = 'http://localhost:8080/gallery/' + str(gallery.id) + '/1'

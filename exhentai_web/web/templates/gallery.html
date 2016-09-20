@@ -63,10 +63,11 @@
 </script>
 </head>
 <body style="text-align:center">
-<div id="main" style="width:100%;height:100%">
+<div id="main">
     <div id="info">
-        <span>画集信息</span>
         <div id="info1">
+            <span>画集信息</span>
+            <div class="wl"></div>
             <table>
                 <tbody>
                     <tr>
@@ -78,11 +79,16 @@
                         <td class="tdr">{{ length }} 页</td>
                     </tr>
                     <tr>
-                        <td class="tdl">评分:</td>
-                        <td class="tdr">{{ rating }}</td>
+                        <td class="tdl">发布:</td>
+                        <td class="tdr">{{ posted }}</td>
                     </tr>
                 </tbody>
             </table>
+            <form action="" method="post" id="rating">
+                <input id="ir" type="number" name="tags" placeholder="请输入评分，0-100." value="{{ rating }}">
+                <input id="ib" type="submit" name="submit" value="修改评分" onclick="tag_from_field(); return false">
+            </form>
+            <div class="wl"></div>
         </div>
     </div>
     <div id="image">
@@ -93,13 +99,13 @@
         <div id="comic_img">
             <image id="i" src="{{ first_page_url }}"/>
         </div>
-    </div>
-    <div id="footer">
-        <img id="f" src="../../static/resources/first_page.png" />
-        <img id="p" src="../../static/resources/pre_page.png" />
-        <div><span id="now">1</span> / <span>{{ length }}</span></div>
-        <img id="n" src="../../static/resources/next_page.png" />
-        <img id="l" src="../../static/resources/last_page.png" />
+        <div id="footer">
+            <img id="f" src="../../static/resources/first_page.png" />
+            <img id="p" src="../../static/resources/pre_page.png" />
+            <div><span id="now">1</span> / <span>{{ length }}</span></div>
+            <img id="n" src="../../static/resources/next_page.png" />
+            <img id="l" src="../../static/resources/last_page.png" />
+        </div>
     </div>
 </div>
 </body>
