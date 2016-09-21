@@ -23,32 +23,32 @@
             if (now < length) {
                 now += 1
                 $("span#now").html(now)
-                $(this).attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
+                $(this).attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
             }
         });
         $("img#f").bind("click", function(){
             now = 1
             $("span#now").html(now)
-            $("img#i").attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
+            $("img#i").attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
         });
         $("img#p").bind("click", function(){
             if (now > 1) {
                 now -= 1
                 $("span#now").html(now)
-                $("img#i").attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
+                $("img#i").attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
             }
         });
         $("img#n").bind("click", function(){
             if (now < length) {
                 now += 1
                 $("span#now").html(now)
-                $("img#i").attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
+                $("img#i").attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
             }
         });
         $("img#l").bind("click", function(){
             now = length
             $("span#now").html(now)
-            $("img#i").attr("src", "http://localhost:8080/gallery/" + gid + "/" + now);
+            $("img#i").attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
         });
         $("button#delete").click(function(){
             $.ajax({
@@ -147,7 +147,7 @@
             <h1>{{ name_j }}</h1>
         </div>
         <div id="comic_img">
-            <image id="i" src="{{ first_page_url }}"/>
+            <image id="i" src="http://{{ host }}:8080/gallery/{{ id }}/{{ first_page }}"/>
         </div>
         <div id="footer">
             <img id="f" src="../../static/resources/first_page.png" />

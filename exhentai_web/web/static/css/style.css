@@ -11,7 +11,7 @@
 }
 
 body {
-    margin: 0px
+    margin: 0px;
     background: #4f535b;
     color: #f1f1f1;
     font-size: 8pt;
@@ -57,17 +57,17 @@ div#info1 {
     padding: 15px 5px 15px 5px;
     z-index: 1000;
     position: fixed;
-    background: #4f535b
+    background: #4f535b;
 }
 
 div#info1 span {
     font-weight: bold;
-    font-size: 15pt
+    font-size: 15pt;
 }
 
 div#info1 table {
     width: 90%;
-    margin-left: 10px
+    margin-left: 10px;
 }
 
 td.tdl {
@@ -137,7 +137,7 @@ input#ib:disabled {
 
 div#info2 {
     width: 100%;
-    margin-top: 250px;
+    margin-top: 255px;
     padding: 0 5px 15px 5px;
     background: #4f535b;
 }
@@ -160,15 +160,95 @@ div.tag {
     border-radius: 5px;
     font-weight: bold;
 }
-td.tagtdl {width:40px;font-size:8pt;vertical-align:top}
-td.tagtdr {width:160px;font-size:8pt}
 
-div#image {margin-left:250px;overflow:auto;min-width:720px;height:100%;background:#34353b;padding:15px 50px 15px 50px;z-index:1000}
-div#header {width:100%;z-index:1000}
-div#header h1 {font-size:20pt;font-weight:bold;-webkit-margin-before:0px;-webkit-margin-after:0px;-webkit-margin-start:0px;-webkit-margin-end: 0px;}
-div#comic_img {width:100%;margin-top:15px}
-div#comic_img img {width:100%}
+td.tagtdl {
+    width: 40px;
+    vertical-align: top;
+    font-size: 8pt;
+}
 
-div#footer {height:50px;background:#34353b;position:fixed;bottom:0;left:250px;right:0;z-index:1000}
-div#footer img {display:inline;height:30px;width:30px;margin-top:10px}
-div#footer div {display:inline;height:30px;font-weight:bold;font-size:15px;position:relative;top:-9px;margin-left:10px;margin-right:10px}
+td.tagtdr {
+    width: 160px;
+    font-size: 8pt;
+}
+
+div#image {
+    min-width: 720px;
+    height: 100%;
+    margin-left: 250px;
+    padding: 15px 50px 15px 50px;
+    overflow: auto;
+    background: #34353b;
+}
+
+div#header {
+    width: 100%;
+}
+
+div#header h1 {
+    font-size: 20pt;
+    font-weight: bold;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
+div#comic_img {
+    width: 100%;
+    margin-top: 15px;
+ }
+
+div#comic_img img {
+    width: 100%;
+}
+
+div#footer {
+    height: 50px;
+    position: fixed;
+    left: 250px;
+    right: 0;
+    bottom: 0;
+    background: #34353b;
+}
+
+div#footer img {
+    width: 30px;
+    height: 30px;
+    margin-top: 10px;
+    display: inline;
+}
+
+div#footer div {
+    height: 30px;
+    margin-left: 10px;
+    margin-right: 10px;
+    position: relative;
+    top: -9px;
+    display: inline;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+@media screen and (min-width:1000px) {
+    div#info {
+        float:left;
+    }
+}
+
+@media screen and (max-width:999px) {
+    div#info {
+        width:100%;
+        float:none;
+    }
+    div#info1 {
+        position:static;
+        float:left;
+    }
+    div#info2 {
+        margin:0 0 0 250px;
+    }
+    div#footer {
+        left:0
+    }
+}

@@ -22,6 +22,7 @@ import os
 import pickle
 import zipfile
 import threading
+import socket
 
 
 # 一些常量的定义 =========================================================================================================
@@ -29,6 +30,7 @@ IMPORT_DICT = r'g:\import'
 DST_DICT = r'g:\comic'
 MAX_INSERT = 100
 STATICFILES_DIRS =settings.STATICFILES_DIRS[0]
+IP = socket.gethostbyname(socket.gethostname())
 
 
 # 一些基本方法的定义 ======================================================================================================
@@ -95,7 +97,7 @@ def get_gallery_info(request, gall):
         result['posted'] = gallery.posted.strftime("%Y-%m-%d")
 
         result['first_page'] = 1
-        result['first_page_url'] = 'http://localhost:8080/gallery/' + str(gallery.id) + '/1'
+        result['host'] = IP
 
         # Group信息
         g_relations = ExGalleryGroupRelation.objects.filter(gallery_id=gid)
