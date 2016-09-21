@@ -1,39 +1,174 @@
 /* misc */
 * {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-body{font-size:8pt;font-family:arial,helvetica,sans-serif;color:#f1f1f1;background:#4f535b;margin:0px}
+/* 全局设置 */
+::-webkit-scrollbar {
+    width: 0px;
+}
 
-p {padding:3px 1px;margin:0}
-img {border:0}
-div.wl {background:white;width:100%;height:2px;margin-top:10px;margin-bottom:10px}
+body {
+    margin: 0px
+    background: #4f535b;
+    color: #f1f1f1;
+    font-size: 8pt;
+    font-family: arial,helvetica,sans-serif;
+}
 
+p {
+    margin: 0;
+    padding: 3px 1px;
+}
 
-div#main {width:100%;overflow:hidden}
+img {
+    border: 0;
+}
 
-div#info {width:200px;float:left;font-size:12pt}
+/* 基本组件 */
+div.wl {
+    width: 100%;
+    height: 2px;
+    margin: 10px 0 10px 0;
+    background: white;
+}
 
-div#info1 {width:200px;position:fixed;padding:15px 5px 15px 5px}
-div#info1 span {font-weight:bold;font-size:15pt}
-td.tdl {font-weight:bold;width:30%}
-td.tdr {width:70%;padding:5px 5px 5px 10px;text-align:left}
-form#rating {margin:5px 0 0 0;padding:0;width:100%;height:25px;}
-input#ir {float:left;width:60%;height:100%;font-size:12pt;color:#f1f1f1;background:#34353b;border:1px solid #000000;padding:2px 3px 2px 3px}
-input#ir:enabled:hover {color:#f1f1f1;background:#43464e}
-input#ir:enabled:focus {color:#f1f1f1;background:#43464e}
-input#ir:disabled {color:#f1f1f1;background:#34353b}
-input#ib {width:40%;height:100%;font-size:12pt;font-weight:bold;color:#f1f1f1;background:transparent;border:0;margin:0;cursor:pointer;padding:0}
-input#ib:disabled {color:#f1f1f1;background:#34353b}
+/** 顶级布局 **/
+div#main {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+}
 
-div#image {margin-left:200px;min-width:720px;background:#34353b;padding:15px 50px 15px 50px}
-div#header {width:100%}
+/** 信息界面布局 **/
+div#info {
+    width: 250px;
+    height: 100%;
+    float: left;
+    overflow: auto;
+    font-size: 12pt;
+}
+
+div#info1 {
+    width: 250px;
+    padding: 15px 5px 15px 5px;
+    z-index: 1000;
+    position: fixed;
+    background: #4f535b
+}
+
+div#info1 span {
+    font-weight: bold;
+    font-size: 15pt
+}
+
+div#info1 table {
+    width: 90%;
+    margin-left: 10px
+}
+
+td.tdl {
+    width: 20%;
+    text-align: left;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+td.tdr {
+    width: 80%;
+    padding: 5px 5px 5px 10px;
+    text-align: left;
+    font-size: 12pt;
+}
+
+form#rating {
+    width: 90%;
+    height: 25px;
+    margin: 5px 0 0 10px;
+    padding: 0;
+}
+
+input#ir {
+    width: 60%;
+    height: 100%;
+    padding: 2px 3px 2px 3px;
+    float: left;
+    background: #34353b;
+    color: #f1f1f1;
+    border: 1px solid #000000;
+    font-size: 12pt;
+}
+
+input#ir:enabled:hover {
+    background :#43464e;
+    color: #f1f1f1;
+}
+
+input#ir:enabled:focus {
+    background: #43464e;
+    color: #f1f1f1;
+}
+
+input#ir:disabled {
+    background: #34353b;
+    color: #f1f1f1;
+}
+
+input#ib {
+    width: 40%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    color: #f1f1f1;
+    border: 0;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+input#ib:disabled {
+    background: #34353b;
+    color: #f1f1f1;
+}
+
+div#info2 {
+    width: 100%;
+    margin-top: 250px;
+    padding: 0 5px 15px 5px;
+    background: #4f535b;
+}
+
+div#info2 table {
+    width: 100%;
+}
+
+div.tag {
+    max-width: 140px;
+    margin: 0 2px 5px 2px;
+    padding: 1px 4px;
+    float: left;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    background: #4f535b;
+    border: 1px solid #989898;
+    border-radius: 5px;
+    font-weight: bold;
+}
+td.tagtdl {width:40px;font-size:8pt;vertical-align:top}
+td.tagtdr {width:160px;font-size:8pt}
+
+div#image {margin-left:250px;overflow:auto;min-width:720px;height:100%;background:#34353b;padding:15px 50px 15px 50px;z-index:1000}
+div#header {width:100%;z-index:1000}
 div#header h1 {font-size:20pt;font-weight:bold;-webkit-margin-before:0px;-webkit-margin-after:0px;-webkit-margin-start:0px;-webkit-margin-end: 0px;}
 div#comic_img {width:100%;margin-top:15px}
 div#comic_img img {width:100%}
 
-div#footer {height:50px;background:#34353b;position:fixed;bottom:0;left:200px;right:0}
+div#footer {height:50px;background:#34353b;position:fixed;bottom:0;left:250px;right:0;z-index:1000}
 div#footer img {display:inline;height:30px;width:30px;margin-top:10px}
 div#footer div {display:inline;height:30px;font-weight:bold;font-size:15px;position:relative;top:-9px;margin-left:10px;margin-right:10px}

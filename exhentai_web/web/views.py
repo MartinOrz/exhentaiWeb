@@ -12,9 +12,9 @@ from web.models import ExGalleryGroupRelation
 from web.models import ExTag
 from web.models import ExGalleryTagRelation
 from web.models import tag_types
-from web.models import tag_types
 from web.models import status
 from web.models import display_languages
+from web.models import display_types
 from django.db import transaction
 from datetime import datetime
 from exhentai_web import settings
@@ -86,6 +86,7 @@ def get_gallery_info(request, gall):
         result = dict()
         result['title'] = gallery.name  # 页面标题
         result['id'] = gallery.id  # 画集id，作为全局变量存储
+        result['type'] = display_types[gallery.type]
         result['length'] = gallery.length  # 画集长度，作为全局变量存储
         result['name_n'] = gallery.name_n  # 名称
         result['name_j'] = gallery.name_j  # 日文名称
@@ -95,24 +96,34 @@ def get_gallery_info(request, gall):
 
         result['first_page'] = 1
         result['first_page_url'] = 'http://localhost:8080/gallery/' + str(gallery.id) + '/1'
-        #
-        # # Group信息
-        # g_relations = ExGalleryGroupRelation.objects.filter(gallery_id=gid)
-        # group_ids = [relation.group_id for relation in g_relations]
-        # groups = ExGroup.objects.filter(id__in=group_ids)
-        # result['group'] = [group.to_dict() for group in groups]
-        #
-        # # Author信息
-        # a_relations = ExGalleryAuthorRelation.objects.filter(gallery_id=gid)
-        # author_ids = [relation.author_id for relation in a_relations]
-        # authors = ExAuthor.objects.filter(id__in=author_ids)
-        # result['author'] = [author.to_dict() for author in authors]
-        #
-        # # Tag信息
-        # t_relations = ExGalleryTagRelation.objects.filter(gallery_id=gid)
-        # tag_ids = [relation.tag_id for relation in t_relations]
-        # tags = ExTag.objects.filter(id__in=tag_ids)
-        # result['tag'] = [tag.to_dict() for tag in tags]
+
+        # Group信息
+        g_relations = ExGalleryGroupRelation.objects.filter(gallery_id=gid)
+        group_ids = [relation.group_id for relation in g_relations]
+        groups = ExGroup.objects.filter(id__in=group_ids)
+        result['groups'] = groups
+
+        # Author信息
+        a_relations = ExGalleryAuthorRelation.objects.filter(gallery_id=gid)
+        author_ids = [relation.author_id for relation in a_relations]
+        authors = ExAuthor.objects.filter(id__in=author_ids)
+        result['authors'] = authors
+
+        # Tag信息
+        t_relations = ExGalleryTagRelation.objects.filter(gallery_id=gid)
+        tag_ids = [relation.tag_id for relation in t_relations]
+        tags = ExTag.objects.filter(id__in=tag_ids)
+        result['male_tags'] = []
+        result['female_tags'] = []
+        result['misc_tags'] = []
+        for tag in tags:
+            if tag.type == tag_types['male_tag']:
+                result['male_tags'].append(tag)
+            elif tag.type == tag_types['female_tag']:
+                result['female_tags'].append(tag)
+            else:
+                result['misc_tags'].append(tag)
+
         return render(request, 'gallery.html', result)
     except Exception as e:
         return _get_error_json(None)

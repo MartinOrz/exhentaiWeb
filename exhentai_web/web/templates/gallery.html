@@ -71,6 +71,10 @@
             <table>
                 <tbody>
                     <tr>
+                        <td class="tdl">类型:</td>
+                        <td class="tdr">{{ type }}</td>
+                    </tr>
+                    <tr>
                         <td class="tdl">语言:</td>
                         <td class="tdr">{{ language }}</td>
                     </tr>
@@ -89,6 +93,52 @@
                 <input id="ib" type="submit" name="submit" value="修改评分" onclick="tag_from_field(); return false">
             </form>
             <div class="wl"></div>
+        </div>
+        <div id="info2">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="tagtdl">作者:</td>
+                        <td class="tagtdr">
+                            {% for author in authors %}
+                            <div class="tag" style="opacity:1.0">{{ author.name }}</div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tagtdl">团体:</td>
+                        <td class="tagtdr">
+                            {% for group in groups %}
+                            <div class="tag" style="opacity:1.0">{{ group.name }}</div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tagtdl">男性:</td>
+                        <td class="tagtdr">
+                            {% for tag in male_tags %}
+                            <div class="tag" style="opacity:1.0">{{ tag.name }}</div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tagtdl">女性:</td>
+                        <td class="tagtdr">
+                            {% for tag in female_tags %}
+                            <div class="tag" style="opacity:1.0">{{ tag.name }}</div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tagtdl">其他:</td>
+                        <td class="tagtdr">
+                            {% for tag in misc_tags %}
+                            <div class="tag" style="opacity:1.0">{{ tag.name }}</div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     <div id="image">
