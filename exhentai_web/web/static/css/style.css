@@ -11,6 +11,7 @@
 }
 
 body {
+    min-width:720px;
     margin: 0px;
     background: #4f535b;
     color: #f1f1f1;
@@ -35,11 +36,31 @@ div.wl {
     background: white;
 }
 
+div#header {
+    width: 100%;
+    min-width:720px;
+    height:70px;
+    padding: 10px;
+    border-bottom: #ffffff solid;
+}
+
+div#header h1 {
+    font-size: 15pt;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
 /** 顶级布局 **/
 div#main {
     width: 100%;
     position: fixed;
-    top: 0;
+    top: 70px;
     bottom: 0;
 }
 
@@ -47,17 +68,18 @@ div#main {
 div#info {
     width: 250px;
     height: 100%;
+    position: relative;
     float: left;
-    overflow: auto;
     font-size: 12pt;
 }
 
 div#info1 {
     width: 250px;
-    padding: 15px 5px 15px 5px;
-    z-index: 1000;
-    position: fixed;
+    height: 200px;
+    padding: 5px;
+    float:top;
     background: #4f535b;
+    border-bottom: #ffffff solid;
 }
 
 div#info1 span {
@@ -137,8 +159,12 @@ input#ib:disabled {
 
 div#info2 {
     width: 100%;
-    margin-top: 255px;
-    padding: 0 5px 15px 5px;
+    height: auto;
+    padding: 5px;
+    position: absolute;
+    top: 200px;
+    bottom: 0;
+    overflow: auto;
     background: #4f535b;
 }
 
@@ -162,13 +188,15 @@ div.tag {
 }
 
 td.tagtdl {
-    width: 40px;
+    width: 30px;
     vertical-align: top;
+    border-collapse: collapse;
     font-size: 8pt;
 }
 
 td.tagtdr {
     width: 160px;
+    border-collapse: collapse;
     font-size: 8pt;
 }
 
@@ -176,22 +204,9 @@ div#image {
     min-width: 720px;
     height: 100%;
     margin-left: 250px;
+    border-left: #ffffff solid;
     padding: 15px 50px 15px 50px;
     overflow: auto;
-    background: #34353b;
-}
-
-div#header {
-    width: 100%;
-}
-
-div#header h1 {
-    font-size: 20pt;
-    font-weight: bold;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    -webkit-margin-start: 0px;
-    -webkit-margin-end: 0px;
 }
 
 div#comic_img {
@@ -209,7 +224,8 @@ div#footer {
     left: 250px;
     right: 0;
     bottom: 0;
-    background: #34353b;
+    border-left: #ffffff solid;
+    background: #4f535b;
 }
 
 div#footer img {
@@ -230,25 +246,57 @@ div#footer div {
     font-size: 15px;
 }
 
-@media screen and (min-width:1000px) {
+@media screen and (max-width:1200px) {
+    div#header {
+        width: 1200px;
+    }
     div#info {
+        width: 1200px;
+        min-width: 1000px;
+        height: 200px;
+        border-bottom: #ffffff solid;
+    }
+    div#info1 {
+        height: 100%;
+        position:static;
         float:left;
+        border-bottom: none;
+    }
+    div#info2 {
+        width: 750px;
+        height: 100%;
+        margin-left:250px;
+        padding: 5px;
+        position: static;
+        overflow: hidden;
+        border-left: #ffffff solid;
+        background: #4f535b;
+    }
+    div#info2 table {
+        height: 100%;
+    }
+    div#image {
+        margin-left: 0;
+        border-left: none;
+    }
+    div#footer {
+        left: 0;
+        border-left: none;
     }
 }
 
-@media screen and (max-width:999px) {
+@media screen and (max-width:1000px) {
+    div#header {
+        width: auto;
+        min-width: 720px;
+    }
+    div#main {
+        min-width: 720px;
+    }
     div#info {
-        width:100%;
-        float:none;
-    }
-    div#info1 {
-        position:static;
-        float:left;
-    }
-    div#info2 {
-        margin:0 0 0 250px;
+        display: none;
     }
     div#footer {
-        left:0
+        min-width: 720px;
     }
 }

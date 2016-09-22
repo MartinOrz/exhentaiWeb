@@ -26,8 +26,8 @@ import socket
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'g:\import'
-DST_DICT = r'g:\comic'
+IMPORT_DICT = r'e:\import'
+DST_DICT = r'e:\comic'
 MAX_INSERT = 100
 STATICFILES_DIRS =settings.STATICFILES_DIRS[0]
 IP = socket.gethostbyname(socket.gethostname())

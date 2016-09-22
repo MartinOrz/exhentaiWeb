@@ -63,11 +63,13 @@
 </script>
 </head>
 <body style="text-align:center">
+<div id="header">
+    <h1>{{ name_n }}</h1>
+    <h1>{{ name_j }}</h1>
+</div>
 <div id="main">
     <div id="info">
         <div id="info1">
-            <span>画集信息</span>
-            <div class="wl"></div>
             <table>
                 <tbody>
                     <tr>
@@ -92,7 +94,6 @@
                 <input id="ir" type="number" name="tags" placeholder="请输入评分，0-100." value="{{ rating }}">
                 <input id="ib" type="submit" name="submit" value="修改评分" onclick="tag_from_field(); return false">
             </form>
-            <div class="wl"></div>
         </div>
         <div id="info2">
             <table>
@@ -142,20 +143,16 @@
         </div>
     </div>
     <div id="image">
-        <div id="header">
-            <h1>{{ name_n }}</h1>
-            <h1>{{ name_j }}</h1>
-        </div>
         <div id="comic_img">
             <image id="i" src="http://{{ host }}:8080/gallery/{{ id }}/{{ first_page }}"/>
         </div>
-        <div id="footer">
-            <img id="f" src="../../static/resources/first_page.png" />
-            <img id="p" src="../../static/resources/pre_page.png" />
-            <div><span id="now">1</span> / <span>{{ length }}</span></div>
-            <img id="n" src="../../static/resources/next_page.png" />
-            <img id="l" src="../../static/resources/last_page.png" />
-        </div>
+    </div>
+    <div id="footer">
+        <img id="f" src="../../static/resources/first_page.png" />
+        <img id="p" src="../../static/resources/pre_page.png" />
+        <div><span id="now">1</span> / <span>{{ length }}</span></div>
+        <img id="n" src="../../static/resources/next_page.png" />
+        <img id="l" src="../../static/resources/last_page.png" />
     </div>
 </div>
 </body>
