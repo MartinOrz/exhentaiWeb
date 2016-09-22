@@ -26,8 +26,8 @@ import socket
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'e:\import'
-DST_DICT = r'e:\comic'
+IMPORT_DICT = r'g:\import'
+DST_DICT = r'g:\comic'
 MAX_INSERT = 100
 STATICFILES_DIRS =settings.STATICFILES_DIRS[0]
 IP = socket.gethostbyname(socket.gethostname())
@@ -93,6 +93,7 @@ def get_gallery_info(request, gall):
         result['name_n'] = gallery.name_n  # 名称
         result['name_j'] = gallery.name_j  # 日文名称
         result['language'] = display_languages[gallery.language]
+        result['translator'] = gallery.translator
         result['rating'] = gallery.rating
         result['posted'] = gallery.posted.strftime("%Y-%m-%d")
 
@@ -125,7 +126,6 @@ def get_gallery_info(request, gall):
                 result['female_tags'].append(tag)
             else:
                 result['misc_tags'].append(tag)
-
         return render(request, 'gallery.html', result)
     except Exception as e:
         return _get_error_json(None)
@@ -147,8 +147,9 @@ def update_gallery(request, gall):
         if 'translator' in request.POST and not request.POST['translator'].strip():
             gallery.translator = request.POST['translator']
         if 'rating' in request.POST:
-            rating = min(100, max(0, int(request.POST['rating'])))
+            gallery.rating = min(100, max(0, int(request.POST['rating'])))
         gallery.last_view = datetime.now()
+        gallery.save()
         return _get_success_json(None)
     except Exception as e:
         return _get_error_json(None)

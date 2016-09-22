@@ -59,6 +59,21 @@
                 }
             });
         });
+        $("input#update").click(function(){
+            $(this).disabled="disabled"
+            $.ajax({
+				url: window.location.href,
+				type: 'POST',
+				data: "rating=" + getDefaultValue($("input#rating").val()) + "&translator=" + getDefaultValue($("input#translator").val()),
+				success: function(response){
+					if (response.success) {
+					    window.location.reload()
+					} else {
+					    alert("修改失败！")
+					}
+				}
+			});
+        });
     });
 </script>
 </head>
@@ -85,19 +100,29 @@
                         <td class="tdr">{{ length }} 页</td>
                     </tr>
                     <tr>
-                        <td class="tdl">发布:</td>
-                        <td class="tdr">{{ posted }}</td>
+                        <td class="tdl">评分:</td>
+                        <td class="tdr">
+                            <input class="ir" id="rating" type="number" name="rating" placeholder="请输入评分，0-100." value="{{ rating }}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdl">汉化:</td>
+                        <td class="tdr">
+                            <input class="ir" id="translator" type="text" name="translator" placeholder="请输入汉化组" value="{{ translator }}"/>
+                        </td>
                     </tr>
                 </tbody>
             </table>
-            <form action="" method="post" id="rating">
-                <input id="ir" type="number" name="tags" placeholder="请输入评分，0-100." value="{{ rating }}">
-                <input id="ib" type="submit" name="submit" value="修改评分" onclick="tag_from_field(); return false">
-            </form>
+            <div class="wl"></div>
+            <div>
+                <input class="ib" id="update" type="submit" value="提交更改">
+                <input class="ib" id="delete" type="submit" value="删除画集">
+            </div>
         </div>
         <div id="info2">
             <table>
                 <tbody>
+                    {%if authors%}
                     <tr>
                         <td class="tagtdl">作者:</td>
                         <td class="tagtdr">
@@ -106,6 +131,8 @@
                             {% endfor %}
                         </td>
                     </tr>
+                    {% endif %}
+                    {%if groups%}
                     <tr>
                         <td class="tagtdl">团体:</td>
                         <td class="tagtdr">
@@ -114,7 +141,9 @@
                             {% endfor %}
                         </td>
                     </tr>
-                    <tr>
+                    {% endif %}
+                    {%if male_tags%}
+                     <tr>
                         <td class="tagtdl">男性:</td>
                         <td class="tagtdr">
                             {% for tag in male_tags %}
@@ -122,6 +151,8 @@
                             {% endfor %}
                         </td>
                     </tr>
+                    {% endif %}
+                    {%if female_tags%}
                     <tr>
                         <td class="tagtdl">女性:</td>
                         <td class="tagtdr">
@@ -130,6 +161,8 @@
                             {% endfor %}
                         </td>
                     </tr>
+                    {% endif %}
+                    {%if misc_tags%}
                     <tr>
                         <td class="tagtdl">其他:</td>
                         <td class="tagtdr">
@@ -138,6 +171,7 @@
                             {% endfor %}
                         </td>
                     </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

@@ -20,3 +20,6 @@ function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
+function getDefaultValue (val) {
+	return val.length === 0 ? null : val;
+}

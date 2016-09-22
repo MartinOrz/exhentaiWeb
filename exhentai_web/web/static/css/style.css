@@ -31,9 +31,9 @@ img {
 /* 基本组件 */
 div.wl {
     width: 100%;
-    height: 2px;
+    height: 1px;
     margin: 10px 0 10px 0;
-    background: white;
+    background: #aaaaaa;
 }
 
 div#header {
@@ -82,67 +82,54 @@ div#info1 {
     border-bottom: #ffffff solid;
 }
 
-div#info1 span {
-    font-weight: bold;
-    font-size: 15pt;
-}
-
 div#info1 table {
-    width: 90%;
-    margin-left: 10px;
+    width: 250px;
 }
 
 td.tdl {
-    width: 20%;
+    width: 50px;
+    height: 25px;
     text-align: left;
+    border-collapse: collapse;
     font-weight: bold;
     font-size: 12pt;
 }
 
 td.tdr {
-    width: 80%;
-    padding: 5px 5px 5px 10px;
+    width: 180px;
+    height: 25px;
     text-align: left;
     font-size: 12pt;
 }
 
-form#rating {
-    width: 90%;
-    height: 25px;
-    margin: 5px 0 0 10px;
-    padding: 0;
-}
-
-input#ir {
-    width: 60%;
-    height: 100%;
+input.ir {
+    width: 180px;
+    height: 20px;
     padding: 2px 3px 2px 3px;
-    float: left;
     background: #34353b;
     color: #f1f1f1;
     border: 1px solid #000000;
     font-size: 12pt;
 }
 
-input#ir:enabled:hover {
+input.ir:enabled:hover {
     background :#43464e;
     color: #f1f1f1;
 }
 
-input#ir:enabled:focus {
+input.ir:enabled:focus {
     background: #43464e;
     color: #f1f1f1;
 }
 
-input#ir:disabled {
+input.ir:disabled {
     background: #34353b;
     color: #f1f1f1;
 }
 
-input#ib {
-    width: 40%;
-    height: 100%;
-    margin: 0;
+input.ib {
+    width: 100px;
+    height: 25px;
     padding: 0;
     cursor: pointer;
     background: transparent;
@@ -152,13 +139,13 @@ input#ib {
     font-size: 12pt;
 }
 
-input#ib:disabled {
+input.ib:disabled {
     background: #34353b;
     color: #f1f1f1;
 }
 
 div#info2 {
-    width: 100%;
+    width: 250px;
     height: auto;
     padding: 5px;
     position: absolute;
@@ -169,7 +156,7 @@ div#info2 {
 }
 
 div#info2 table {
-    width: 100%;
+    width: 250px;
 }
 
 div.tag {
@@ -188,7 +175,9 @@ div.tag {
 }
 
 td.tagtdl {
-    width: 30px;
+    width: 40px;
+    height-min: 26px;
+    padding-top: 2px;
     vertical-align: top;
     border-collapse: collapse;
     font-size: 8pt;
@@ -196,6 +185,7 @@ td.tagtdl {
 
 td.tagtdr {
     width: 160px;
+    height-min: 26px;
     border-collapse: collapse;
     font-size: 8pt;
 }
@@ -273,7 +263,15 @@ div#footer div {
         background: #4f535b;
     }
     div#info2 table {
-        height: 100%;
+        width:750px;
+    }
+    td.tagtdl {
+         padding-top:2px;
+    }
+    td.tagtdr {
+        width: 710px;
+        border-collapse: collapse;
+        font-size: 8pt;
     }
     div#image {
         margin-left: 0;
