@@ -26,8 +26,8 @@ import socket
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'g:\import'
-DST_DICT = r'g:\comic'
+IMPORT_DICT = r'e:\import'
+DST_DICT = r'e:\comic'
 MAX_INSERT = 100
 STATICFILES_DIRS =settings.STATICFILES_DIRS[0]
 IP = socket.gethostbyname(socket.gethostname())
@@ -187,7 +187,7 @@ def get_gallery_id(request):
     :return: 选取到的画集id
     """
     try:
-        status = int(request.GET['status']) if 'status' in request.GET else -1
+        status = int(request.GET['status']) if 'status' in request.GET and request.GET['status'] != 'null' else -1
         rand = bool(request.GET['random']) if 'random' in request.GET else False
         galls = ExGallery.objects.all() if status < 0 else ExGallery.objects.filter(status=status)
         result = galls.order_by('?')[0].id if rand else galls[0].id

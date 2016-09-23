@@ -4,12 +4,26 @@
 <meta charset="UTF-8">
 <title>{{ title }}</title>
 <link rel="stylesheet" type="text/css" href="../../static/css/style.css" />
-<script type="text/javascript" src="../../static/js/jquery-3.1.0.min.js"></script>
+<link rel="stylesheet" type="text/css" href="../../static/css/ui-dialog.css" />
+<script type="text/javascript" src="../../static/js/lib/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="../../static/js/dialog-plus-min.js"></script>
 <script type="text/javascript" src="../../static/js/common.js"></script>
 <script type="text/javascript">
     var gid = {{ id }}
     var length = {{ length }}
     var now = {{ first_page }}
+    var filter = initFilter()
+    function next_gall() {
+        $.ajax({
+            url: "/gallery?random=1&group=" + getDefaultValue(filter.group) + "&author=" + getDefaultValue(filter.author) + "&tag=" + getDefaultValue(filter.tag) + "&status=" + getDefaultValue(filter.status),
+            type: "GET",
+            success: function(result) {
+                if (result.success) {
+                    location.href = "http://{{ host }}:8080/gallery/" + result.data;
+                }
+            }
+        });
+    }
     $(document).ready(function() {
         var csrftoken = getCookie('csrftoken');
         $.ajaxSetup({
@@ -24,6 +38,8 @@
                 now += 1
                 $("span#now").html(now)
                 $(this).attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
+            } else {
+                next_gall()
             }
         });
         $("img#f").bind("click", function(){
@@ -74,6 +90,22 @@
 				}
 			});
         });
+        $("input#setcof").click(function(){
+            var ele = document.getElementById('filter_dialog');
+            var d = dialog({
+                title: '设置过滤器',
+                content: ele,
+                ok: function() {
+                    filter = {}
+                    filter.group = $("#filter_group").val()
+                    filter.author = $("#filter_author").val()
+                    filter.tag = $("#filter_tag").val()
+                    filter.status = $("#filter_status").val()
+                    alert("设置成功！")
+                }
+            });
+            d.showModal();
+        });
     });
 </script>
 </head>
@@ -114,7 +146,8 @@
                 </tbody>
             </table>
             <div class="wl"></div>
-            <div>
+            <div id="submit">
+                <input class="ib" id="setcof" type="submit" value="设置过滤">
                 <input class="ib" id="update" type="submit" value="提交更改">
                 <input class="ib" id="delete" type="submit" value="删除画集">
             </div>
@@ -127,7 +160,7 @@
                         <td class="tagtdl">作者:</td>
                         <td class="tagtdr">
                             {% for author in authors %}
-                            <div class="tag" style="opacity:1.0">{{ author.name }}</div>
+                            <div class="tag" style="opacity:1.0"><a title="ttt">{{ author.name }}</a></div>
                             {% endfor %}
                         </td>
                     </tr>
@@ -137,7 +170,7 @@
                         <td class="tagtdl">团体:</td>
                         <td class="tagtdr">
                             {% for group in groups %}
-                            <div class="tag" style="opacity:1.0">{{ group.name }}</div>
+                            <div class="tag" style="opacity:1.0"><a title="ttt">{{ group.name }}</a></div>
                             {% endfor %}
                         </td>
                     </tr>
@@ -188,6 +221,24 @@
         <img id="n" src="../../static/resources/next_page.png" />
         <img id="l" src="../../static/resources/last_page.png" />
     </div>
+</div>
+<div id="filter_dialog" style="display: none">
+    <table>
+        <tbody>
+            <tr>
+                <td>团体:</td><td><input id="filter_group"></td>
+            </tr>
+            <tr>
+                <td>作者:</td><td><input id="filter_author"></td>
+            </tr>
+            <tr>
+                <td>标签:</td><td><input id="filter_tag"></td>
+            </tr>
+            <tr>
+                <td>状态:</td><td><input id="filter_status"></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 

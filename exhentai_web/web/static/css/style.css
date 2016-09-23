@@ -41,7 +41,7 @@ div#header {
     min-width:720px;
     height:70px;
     padding: 10px;
-    border-bottom: #ffffff solid;
+    border-bottom: 2px #ffffff solid;
 }
 
 div#header h1 {
@@ -79,7 +79,7 @@ div#info1 {
     padding: 5px;
     float:top;
     background: #4f535b;
-    border-bottom: #ffffff solid;
+    border-bottom: 2px #ffffff solid;
 }
 
 div#info1 table {
@@ -100,6 +100,11 @@ td.tdr {
     height: 25px;
     text-align: left;
     font-size: 12pt;
+}
+
+div#submit {
+    width: 240px;
+    height: 25px;
 }
 
 input.ir {
@@ -128,7 +133,7 @@ input.ir:disabled {
 }
 
 input.ib {
-    width: 100px;
+    width: 70px;
     height: 25px;
     padding: 0;
     cursor: pointer;
@@ -194,7 +199,7 @@ div#image {
     min-width: 720px;
     height: 100%;
     margin-left: 250px;
-    border-left: #ffffff solid;
+    border-left: 2px #ffffff solid;
     padding: 15px 50px 15px 50px;
     overflow: auto;
 }
@@ -214,7 +219,7 @@ div#footer {
     left: 250px;
     right: 0;
     bottom: 0;
-    border-left: #ffffff solid;
+    border-left: 2px #ffffff solid;
     background: #4f535b;
 }
 
@@ -244,7 +249,7 @@ div#footer div {
         width: 1200px;
         min-width: 1000px;
         height: 200px;
-        border-bottom: #ffffff solid;
+        border-bottom: 2px #ffffff solid;
     }
     div#info1 {
         height: 100%;
@@ -259,7 +264,7 @@ div#footer div {
         padding: 5px;
         position: static;
         overflow: hidden;
-        border-left: #ffffff solid;
+        border-left: 2px #ffffff solid;
         background: #4f535b;
     }
     div#info2 table {

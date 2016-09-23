@@ -16,10 +16,21 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
+
 function getDefaultValue (val) {
 	return val.length === 0 ? null : val;
+}
+
+function initFilter() {
+    var filter = {}
+    filter.group = ''
+    filter.author = ''
+    filter.tag = ''
+    filter.status = 1
+    return filter
 }

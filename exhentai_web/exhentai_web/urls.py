@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     # 获取画集信息
+    url(r'gallery$', views.get_gallery_id, name='get_gallery_id'),
     url(r'gallery/(\d+)/$', views.method_dispatch(GET=views.get_gallery_info,
                                                   POST=views.update_gallery,
                                                   DELETE=views.delete_gallery), name='gallery'),
