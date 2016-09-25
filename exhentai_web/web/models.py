@@ -85,6 +85,8 @@ tag_types = {
     'male_tag': 0,
     'female_tag': 1,
     'misc_tag': 2,
+    'character': 3,
+    'parody': 4,
 }
 
 
@@ -293,7 +295,8 @@ class ExTag(models.Model):
     """
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
-    text = models.CharField(max_length=255)
+    text = models.CharField(max_length=255, default='')
+    info = models.CharField(max_length=500, default='')
     type = models.IntegerField(db_index=True)
 
     def to_dict(self):
@@ -306,6 +309,7 @@ class ExTag(models.Model):
         result['id'] = self.id
         result['name'] = self.name
         result['text'] = self.text
+        result['info'] = self.info
         result['type'] = self.type
         return result
 
@@ -343,6 +347,29 @@ class ExGalleryTagRelation(models.Model):
         :return: 生成的ExGalleryTagRelation0实体类
         """
         result = ExGalleryTagRelation()
+        result.gallery_id = gallery_id
+        result.tag_id = tag_id
+        return result
+
+
+class ExGalleryCPTagRelation(models.Model):
+    """
+    用于存储画集与同人作品以及角色标签关系的表
+    """
+    id = models.IntegerField(primary_key=True)
+    gallery_id = models.IntegerField(db_index=True)
+    tag_id = models.IntegerField(db_index=True)
+
+    @staticmethod
+    def get_object(gallery_id, tag_id):
+        """
+        根据给定的名称生成一个ExGalleryTagRelation0
+
+        :param gallery_id: 画集id
+        :param tag_id: 标签id
+        :return: 生成的ExGalleryTagRelation0实体类
+        """
+        result = ExGalleryCPTagRelation()
         result.gallery_id = gallery_id
         result.tag_id = tag_id
         return result

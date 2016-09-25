@@ -19,7 +19,11 @@
             type: "GET",
             success: function(result) {
                 if (result.success) {
-                    location.href = "http://{{ host }}:8080/gallery/" + result.data;
+                    if (result.data > 0) {
+                        location.href = "http://{{ host }}:8080/gallery/" + result.data;
+                    } else {
+                        alert('已经是最后一个画集！')
+                    }
                 }
             }
         });
@@ -160,17 +164,45 @@
                         <td class="tagtdl">作者:</td>
                         <td class="tagtdr">
                             {% for author in authors %}
-                            <div class="tag" style="opacity:1.0"><a title="ttt">{{ author.name }}</a></div>
+                            <div class="tag" style="opacity:1.0">
+                                <a title="{% if author.text %}{{ author.text }}{% else %}未翻译{% endif %}">{{ author.name }}</a>
+                            </div>
                             {% endfor %}
                         </td>
                     </tr>
                     {% endif %}
-                    {%if groups%}
+                    {% if groups %}
                     <tr>
                         <td class="tagtdl">团体:</td>
                         <td class="tagtdr">
                             {% for group in groups %}
-                            <div class="tag" style="opacity:1.0"><a title="ttt">{{ group.name }}</a></div>
+                            <div class="tag" style="opacity:1.0">
+                                <a title="{% if group.text %}{{ group.text }}{% else %}未翻译{% endif %}">{{ group.name }}</a>
+                            </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if characters %}
+                    <tr>
+                        <td class="tagtdl">角色:</td>
+                        <td class="tagtdr">
+                            {% for character in characters %}
+                            <div class="tag" style="opacity:1.0">
+                                <a title="{% if character.text %}{{ character.text }}{% else %}未翻译{% endif %}">{{ character.name }}</a>
+                            </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if parodies %}
+                    <tr>
+                        <td class="tagtdl">同人:</td>
+                        <td class="tagtdr">
+                            {% for parody in parodies %}
+                            <div class="tag" style="opacity:1.0">
+                                <a title="{% if parody.text %}{{ parody.text }}{% else %}未翻译{% endif %}">{{ parody.name }}</a>
+                            </div>
                             {% endfor %}
                         </td>
                     </tr>
@@ -180,7 +212,9 @@
                         <td class="tagtdl">男性:</td>
                         <td class="tagtdr">
                             {% for tag in male_tags %}
-                            <div class="tag" style="opacity:1.0">{{ tag.name }}</div>
+                            <div class="tag" style="opacity:1.0">
+                                <a title="{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
+                            </div>
                             {% endfor %}
                         </td>
                     </tr>
@@ -190,7 +224,9 @@
                         <td class="tagtdl">女性:</td>
                         <td class="tagtdr">
                             {% for tag in female_tags %}
-                            <div class="tag" style="opacity:1.0">{{ tag.name }}</div>
+                            <div class="tag" style="opacity:1.0">
+                                <a title="{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
+                            </div>
                             {% endfor %}
                         </td>
                     </tr>
@@ -200,7 +236,9 @@
                         <td class="tagtdl">其他:</td>
                         <td class="tagtdr">
                             {% for tag in misc_tags %}
-                            <div class="tag" style="opacity:1.0">{{ tag.name }}</div>
+                            <div class="tag" style="opacity:1.0">
+                                <a title="{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
+                            </div>
                             {% endfor %}
                         </td>
                     </tr>

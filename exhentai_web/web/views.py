@@ -11,6 +11,7 @@ from web.models import ExGroup
 from web.models import ExGalleryGroupRelation
 from web.models import ExTag
 from web.models import ExGalleryTagRelation
+from web.models import ExGalleryCPTagRelation
 from web.models import tag_types
 from web.models import status
 from web.models import display_languages
@@ -29,7 +30,7 @@ import socket
 IMPORT_DICT = r'e:\import'
 DST_DICT = r'e:\comic'
 MAX_INSERT = 100
-STATICFILES_DIRS =settings.STATICFILES_DIRS[0]
+STATICFILES_DIRS = settings.STATICFILES_DIRS[0]
 IP = socket.gethostbyname(socket.gethostname())
 
 
@@ -126,8 +127,21 @@ def get_gallery_info(request, gall):
                 result['female_tags'].append(tag)
             else:
                 result['misc_tags'].append(tag)
+
+        # 角色 同人信息
+        cpt_relations = ExGalleryCPTagRelation.objects.filter(gallery_id=gid)
+        cpt_ids = [relation.tag_id for relation in cpt_relations]
+        cpts = ExTag.objects.filter(id__in=cpt_ids)
+        result['characters'] = []
+        result['parodies'] = []
+        for cpt in cpts:
+            if cpt.type == tag_types['character']:
+                result['characters'].append(cpt)
+            else:
+                result['parodies'].append(cpt)
         return render(request, 'gallery.html', result)
     except Exception as e:
+        print(e)
         return _get_error_json(None)
 
 
@@ -136,6 +150,7 @@ def update_gallery(request, gall):
     """
     修改画集属性，只有 status, translator, rating, last_view. 由于django不能支持http put,因此使用post
 
+    :param request: 请求
     :param gall: 画集id
     :return: 是否成功
     """
@@ -187,12 +202,54 @@ def get_gallery_id(request):
     :return: 选取到的画集id
     """
     try:
-        status = int(request.GET['status']) if 'status' in request.GET and request.GET['status'] != 'null' else -1
+        status = int(request.GET['status']) if 'status' in request.GET and request.GET['status'] != 'null' else 1
         rand = bool(request.GET['random']) if 'random' in request.GET else False
-        galls = ExGallery.objects.all() if status < 0 else ExGallery.objects.filter(status=status)
-        result = galls.order_by('?')[0].id if rand else galls[0].id
+
+        gids = []
+        # 处理团体
+        group = request.GET['group']
+        if group:
+            groups = ExGroup.objects.filter(name__in=group.split('|'))
+            groupids = [group.id for group in groups]
+            gids += [g.gallery_id for g in ExGalleryGroupRelation.objects.filter(id__in=groupids)]
+
+        # 处理作者
+        author = request.GET['author']
+        if author:
+            authors = ExAuthor.objects.filter(name__in=author.split('|'))
+            authorids = [author.id for author in authors]
+            gids += [a.gallery_id for a in ExGalleryAuthorRelation.objects.filter(id__in=authorids)]
+
+        # 处理标签
+        tag = request.GET['tag']
+        if tag:
+            tags = ExTag.objects.filter(name__in=author.split('|'))
+            tagids = [tag.id for tag in tags]
+            gids += [t.gallery_id for t in ExGalleryTagRelation.objects.filter(id__in=tagids)]
+
+        # 处理角色以及cp
+        c = request.GET['character']
+        p = request.GET['parody']
+        cps = []
+        if c:
+            cps += c.split('|')
+        if p:
+            cps += p.split('|')
+        if cps:
+            tags = ExTag.objects.filter(name__in=cps)
+            tagids = [tag.id for tag in tags]
+            gids += [t.gallery_id for t in ExGalleryCPTagRelation.objects.filter(id__in=tagids)]
+
+        if gids:
+            gids = set(gids)
+            galls = ExGallery.objects.filter(id__in=gids, status=status)
+        else:
+            galls = ExGallery.objects.filter(status=status)
+
+        result = (galls.order_by('?')[0].id if rand else galls[0].id) if len(galls) > 0 else -1
         return _get_success_json(result)
     except Exception as e:
+        print(e)
         return _get_error_json(None)
 
 
@@ -257,7 +314,8 @@ def _import_galleries(filenames):
 
 
     # 先获取所有已经存在的实体类
-    gallery_ids, author_names, group_names, male_names, female_names, misc_names = [], [], [], [], [], []
+    gallery_ids, author_names, group_names, male_names, female_names, misc_names, character_names, parody_names \
+        = [], [], [], [], [], [], [], []
 
     for tup in dics:
         dic = tup[0]
@@ -267,6 +325,8 @@ def _import_galleries(filenames):
         male_names += dic['male_tag']
         female_names += dic['female_tag']
         misc_names += dic['misc_tag']
+        character_names += dic['character']
+        parody_names += dic['parody']
 
     exist_galls = ExGallery.objects.values_list('id').filter(id__in=gallery_ids)
     exist_galls = {int(result[0]) for result in exist_galls}
@@ -285,6 +345,12 @@ def _import_galleries(filenames):
 
     exist_misc = ExTag.objects.values_list('name').filter(name__in=misc_names, type=tag_types['misc_tag'])
     exist_misc = {str(result[0]) for result in exist_misc}
+
+    exist_character = ExTag.objects.values_list('name').filter(name__in=character_names, type=tag_types['character'])
+    exist_character = {str(result[0]) for result in exist_character}
+
+    exist_parody = ExTag.objects.values_list('name').filter(name__in=parody_names, type=tag_types['parody'])
+    exist_parody = {str(result[0]) for result in exist_parody}
 
     # 待插入列表
     galleries, gall_inserted, authors, groups, tags = [], [], [], [], []
@@ -320,6 +386,14 @@ def _import_galleries(filenames):
                 if name not in exist_misc:
                     exist_misc.add(name)
                     tags.append(ExTag.get_object(name, 'misc_tag'))
+            for name in dic['character']:
+                if name not in exist_character:
+                    exist_character.add(name)
+                    tags.append(ExTag.get_object(name, 'character'))
+            for name in dic['parody']:
+                if name not in exist_parody:
+                    exist_parody.add(name)
+                    tags.append(ExTag.get_object(name, 'parody'))
 
     ExGallery.objects.bulk_create(galleries)
     ExAuthor.objects.bulk_create(authors)
@@ -335,12 +409,12 @@ def _import_galleries(filenames):
     groups = ExGroup.objects.filter(name__in=group_names)
     groups = {group.name: group for group in groups}
 
-    tag_names = set(male_names + female_names + misc_names)
+    tag_names = set(male_names + female_names + misc_names + character_names + parody_names)
     tags = ExTag.objects.filter(name__in=tag_names)
     tags = {tag.name + '-' + str(tag.type): tag for tag in tags}
 
     # 处理关联关系
-    aus, ags, ats = [], [], []
+    aus, ags, ats, acs = [], [], [], []
     for tup in dics:
         dic = tup[0]
         gid = int(dic['root_path'].split('/')[4])
@@ -355,11 +429,16 @@ def _import_galleries(filenames):
                 ats.append(ExGalleryTagRelation.get_object(gid, tags[name + '-' + str(tag_types['female_tag'])].id))
             for name in dic['misc_tag']:
                 ats.append(ExGalleryTagRelation.get_object(gid, tags[name + '-' + str(tag_types['misc_tag'])].id))
+            for name in dic['character']:
+                acs.append(ExGalleryCPTagRelation.get_object(gid, tags[name + '-' + str(tag_types['character'])].id))
+            for name in dic['parody']:
+                acs.append(ExGalleryCPTagRelation.get_object(gid, tags[name + '-' + str(tag_types['parody'])].id))
 
     # 最后做关联关系的插入
     ExGalleryAuthorRelation.objects.bulk_create(aus)
     ExGalleryGroupRelation.objects.bulk_create(ags)
     ExGalleryTagRelation.objects.bulk_create(ats)
+    ExGalleryCPTagRelation.objects.bulk_create(acs)
 
     # 修改文件地址
     for tup in dics:
