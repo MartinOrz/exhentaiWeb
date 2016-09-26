@@ -22,15 +22,40 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-function getDefaultValue (val) {
-	return val.length === 0 ? null : val;
-}
-
 function initFilter() {
     var filter = {}
-    filter.group = ''
-    filter.author = ''
-    filter.tag = ''
-    filter.status = 1
+    var url = window.location.href
+
+    var group = getQueryString('group')
+    filter.group = group == null ? '' : group
+
+    var author = getQueryString('author')
+    filter.author = author == null ? '' : author
+
+    var character = getQueryString('character')
+    filter.character = character == null ? '' : character
+
+    var parody = getQueryString('parody')
+    filter.parody = parody == null ? '' : parody
+
+    var tag = getQueryString('tag')
+    filter.tag = tag == null ? '' : tag
+
+    var status = getQueryString('status')
+    filter.status = status == null ? '1' : status
     return filter
+}
+
+function getQueryString(name) {
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null) {
+        return unescape(r[2])
+     }
+     return null;
+}
+
+function get_base_url() {
+    var urls = window.location.href.split('?')
+    return urls[0]
 }

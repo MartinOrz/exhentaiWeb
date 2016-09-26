@@ -33,6 +33,9 @@ urlpatterns = [
     # 导入画集
     url(r'^import/$', views.import_galleries),
 
+    # 标签
+    url(r'^tag/(\d+)/$', views.update_tag, name='update_tag'),
+
     # 静态文件
     url( r'^static/(?P<path>.*)$', django.views.static.serve, {'document_root':settings.STATICFILES_DIRS}),
 ]

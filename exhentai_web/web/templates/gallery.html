@@ -13,14 +13,18 @@
     var length = {{ length }}
     var now = {{ first_page }}
     var filter = initFilter()
+    function get_params(page) {
+        return "random=1&group=" + filter.group + "&author=" + filter.author + "&tag=" + filter.tag + "&status="
+            + filter.status + "&character=" + filter.character + "&parody=" + filter.parody + "&now=" + page
+    }
     function next_gall() {
         $.ajax({
-            url: "/gallery?random=1&group=" + getDefaultValue(filter.group) + "&author=" + getDefaultValue(filter.author) + "&tag=" + getDefaultValue(filter.tag) + "&status=" + getDefaultValue(filter.status),
+            url: "/gallery?" + get_params(),
             type: "GET",
             success: function(result) {
                 if (result.success) {
                     if (result.data > 0) {
-                        location.href = "http://{{ host }}:8080/gallery/" + result.data;
+                        location.href = "http://{{ host }}:8080/gallery/" + result.data +"/?" + get_params(1);
                     } else {
                         alert('已经是最后一个画集！')
                     }
@@ -29,7 +33,7 @@
         });
     }
     $(document).ready(function() {
-        var csrftoken = getCookie('csrftoken');
+        var csrftoken = $('input[name="csrfmiddlewaretoken"]').val()
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
                 if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -37,11 +41,20 @@
                 }
             }
         });
+        $("input#filter_group").attr("value", filter.group)
+        $("input#filter_author").attr("value", filter.author)
+        $("input#filter_character").attr("value", filter.character)
+        $("input#filter_parody").attr("value", filter.parody)
+        $("input#filter_tag").attr("value", filter.tag)
+        $("input#filter_status").attr("value", filter.status)
         $("img#i").bind("click", function(){
             if (now < length) {
                 now += 1
                 $("span#now").html(now)
                 $(this).attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
+                if (now + 1 < length) {
+                    $("img#i1").attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + (now + 1));
+                }
             } else {
                 next_gall()
             }
@@ -64,20 +77,33 @@
                 $("span#now").html(now)
                 $("img#i").attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
             }
+            if (now + 1 < length) {
+                $("img#i1").attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + (now + 1));
+            }
         });
         $("img#l").bind("click", function(){
             now = length
             $("span#now").html(now)
             $("img#i").attr("src", "http://{{ host }}:8080/gallery/" + gid + "/" + now);
         });
-        $("button#delete").click(function(){
-            $.ajax({
-                url: "/gallery/" + gid,
-                type: "DELETE",
-                success: function(result) {
-                    // Do something with the result
+        $("input#delete").click(function(){
+            var d = dialog({
+                title: '删除画集',
+                content: '确定要删除吗？',
+                cancel: function() {},
+                ok: function() {
+                    $.ajax({
+                        url: "/gallery/" + gid,
+                        type: "DELETE",
+                        success: function(result) {
+                            if (result.success) {
+                                next_gall()
+                            }
+                        }
+                    });
                 }
             });
+            d.show()
         });
         $("input#update").click(function(){
             $(this).disabled="disabled"
@@ -87,7 +113,7 @@
 				data: "rating=" + getDefaultValue($("input#rating").val()) + "&translator=" + getDefaultValue($("input#translator").val()),
 				success: function(response){
 					if (response.success) {
-					    window.location.reload()
+					    window.location.href = get_base_url() + "?" + get_params(now)
 					} else {
 					    alert("修改失败！")
 					}
@@ -103,9 +129,38 @@
                     filter = {}
                     filter.group = $("#filter_group").val()
                     filter.author = $("#filter_author").val()
+                    filter.character = $("#filter_character").val()
+                    filter.parody = $("#filter_parody").val()
                     filter.tag = $("#filter_tag").val()
                     filter.status = $("#filter_status").val()
-                    alert("设置成功！")
+                    window.location.href = get_base_url() + "?" + get_params(now)
+                }
+            });
+            d.showModal();
+        });
+        $("a.at").click(function(){
+            var ele = document.getElementById('tag_edit_dialog');
+            $("span#te_name").html($(this).html())
+            $("span#te_type").html($(this).attr("title").split(":")[0])
+            $("input#te_text").attr("value", $(this).attr("title").split(":")[1])
+
+            var tid = $(this).attr("id").split("_")[1]
+            var d = dialog({
+                title: '标签编辑',
+                content: ele,
+                ok: function() {
+                    $.ajax({
+				        url: "http://{{ host }}:8080/tag/" + tid + "/",
+				        type: 'POST',
+				        data: "text=" + $("input#te_text").val(),
+				        success: function(response){
+					        if (response.success) {
+					            window.location.href = get_base_url() + "?" + get_params(now)
+					        } else {
+					            alert("修改失败！")
+					        }
+				        }
+			        });
                 }
             });
             d.showModal();
@@ -189,7 +244,7 @@
                         <td class="tagtdr">
                             {% for character in characters %}
                             <div class="tag" style="opacity:1.0">
-                                <a title="{% if character.text %}{{ character.text }}{% else %}未翻译{% endif %}">{{ character.name }}</a>
+                                <a id="tag_{{ character.id }}" title="{% if character.text %}{{ character.text }}{% else %}未翻译{% endif %}">{{ character.name }}</a>
                             </div>
                             {% endfor %}
                         </td>
@@ -201,7 +256,7 @@
                         <td class="tagtdr">
                             {% for parody in parodies %}
                             <div class="tag" style="opacity:1.0">
-                                <a title="{% if parody.text %}{{ parody.text }}{% else %}未翻译{% endif %}">{{ parody.name }}</a>
+                                <a id="tag_{{ parody.id }}" title="{% if parody.text %}{{ parody.text }}{% else %}未翻译{% endif %}">{{ parody.name }}</a>
                             </div>
                             {% endfor %}
                         </td>
@@ -211,9 +266,9 @@
                      <tr>
                         <td class="tagtdl">男性:</td>
                         <td class="tagtdr">
-                            {% for tag in male_tags %}
+                            {% for mtag in male_tags %}
                             <div class="tag" style="opacity:1.0">
-                                <a title="{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
+                                <a class="at" id="tag_{{ mtag.id }}" title="男性:{% if mtag.text %}{{ mtag.text }}{% else %}未翻译{% endif %}">{{ mtag.name }}</a>
                             </div>
                             {% endfor %}
                         </td>
@@ -223,9 +278,9 @@
                     <tr>
                         <td class="tagtdl">女性:</td>
                         <td class="tagtdr">
-                            {% for tag in female_tags %}
-                            <div class="tag" style="opacity:1.0">
-                                <a title="{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
+                            {% for ftag in female_tags %}
+                            <div  class="tag" style="opacity:1.0">
+                                <a class="at" id="tag_{{ ftag.id }}" title="女性:{% if ftag.text %}{{ ftag.text }}{% else %}未翻译{% endif %}">{{ ftag.name }}</a>
                             </div>
                             {% endfor %}
                         </td>
@@ -237,7 +292,7 @@
                         <td class="tagtdr">
                             {% for tag in misc_tags %}
                             <div class="tag" style="opacity:1.0">
-                                <a title="{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
+                                <a title="其他:{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
                             </div>
                             {% endfor %}
                         </td>
@@ -250,6 +305,7 @@
     <div id="image">
         <div id="comic_img">
             <image id="i" src="http://{{ host }}:8080/gallery/{{ id }}/{{ first_page }}"/>
+            <image id="i1" style="height:0" src="http://{{ host }}:8080/gallery/{{ id }}/{{ first_page|add:1 }}" />
         </div>
     </div>
     <div id="footer">
@@ -270,6 +326,12 @@
                 <td>作者:</td><td><input id="filter_author"></td>
             </tr>
             <tr>
+                <td>角色:</td><td><input id="filter_character"></td>
+            </tr>
+            <tr>
+                <td>同人:</td><td><input id="filter_parody"></td>
+            </tr>
+            <tr>
                 <td>标签:</td><td><input id="filter_tag"></td>
             </tr>
             <tr>
@@ -278,6 +340,21 @@
         </tbody>
     </table>
 </div>
+<div id="tag_edit_dialog" style="display: none">
+    <table>
+        <tbody>
+            <tr>
+                <td>标签名称:</td><td><span id="te_name"/></td>
+            </tr>
+            <tr>
+                <td>标签类型:</td><td><span id="te_type"/></td>
+            </tr>
+            <tr>
+                <td>中文名称:</td><td><input id="te_text" style="width:200px"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% csrf_token %}
 </body>
-
 </html>
