@@ -139,31 +139,33 @@
             d.showModal();
         });
         $("a.at").click(function(){
-            var ele = document.getElementById('tag_edit_dialog');
-            $("span#te_name").html($(this).html())
-            $("span#te_type").html($(this).attr("title").split(":")[0])
-            $("input#te_text").attr("value", $(this).attr("title").split(":")[1])
-
             var tid = $(this).attr("id").split("_")[1]
-            var d = dialog({
-                title: '标签编辑',
-                content: ele,
-                ok: function() {
-                    $.ajax({
-				        url: "http://{{ host }}:8080/tag/" + tid + "/",
-				        type: 'POST',
-				        data: "text=" + $("input#te_text").val(),
-				        success: function(response){
-					        if (response.success) {
-					            window.location.href = get_base_url() + "?" + get_params(now)
-					        } else {
-					            alert("修改失败！")
-					        }
-				        }
-			        });
-                }
-            });
-            d.showModal();
+            $.ajax({
+				url: "/tag/" + tid + "/",
+				type: 'GET',
+				success: function(response){
+					var d = dialog({
+                        title: '标签编辑',
+                        content: response,
+                        ok: function() {
+                            $.ajax({
+				                url: "http://{{ host }}:8080/tag/" + tid + "/",
+				                type: 'POST',
+				                data: "text=" + $("input#te_text").val(),
+				                success: function(response){
+					                if (response.success) {
+					                    window.location.href = get_base_url() + "?" + get_params(now)
+					                } else {
+					                    alert("修改失败！")
+					                }
+				                }
+			                });
+                        },
+                        cancel: function() {}
+                    });
+                    d.showModal();
+				}
+			});
         });
     });
 </script>
@@ -220,7 +222,7 @@
                         <td class="tagtdr">
                             {% for author in authors %}
                             <div class="tag" style="opacity:1.0">
-                                <a title="{% if author.text %}{{ author.text }}{% else %}未翻译{% endif %}">{{ author.name }}</a>
+                                <a id="author_{{ author.id }}" class="aa" title="{% if author.text %}{{ author.text }}{% else %}未翻译{% endif %}">{{ author.name }}</a>
                             </div>
                             {% endfor %}
                         </td>

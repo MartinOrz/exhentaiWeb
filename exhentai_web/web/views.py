@@ -27,8 +27,8 @@ import socket
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'e:\import'
-DST_DICT = r'e:\comic'
+IMPORT_DICT = r'g:\import'
+DST_DICT = r'g:\comic'
 MAX_INSERT = 100
 STATICFILES_DIRS = settings.STATICFILES_DIRS[0]
 IP = socket.gethostbyname(socket.gethostname())
@@ -472,6 +472,14 @@ class ImportTask(threading.Thread):
 
 
 # 标签相关请求 ===========================================================================================================
+def get_tag(request, t):
+    try:
+        tid = int(t)
+        tag = ExTag.objects.get(id=tid)
+        return render(request, 'tagEdit.html', tag.to_dict())
+    except Exception as e:
+        return _get_error_json(None)
+
 @transaction.atomic
 def update_tag(request, t):
     """

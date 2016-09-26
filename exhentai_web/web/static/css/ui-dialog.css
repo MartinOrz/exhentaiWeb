@@ -99,7 +99,7 @@
     cursor: default;
 }
 .ui-dialog-body {
-    padding: 20px;
+    padding: 10px 20px 10px 20px;
     text-align: center;
 }
 .ui-dialog-content {
@@ -111,7 +111,7 @@
     text-align: left;
 }
 .ui-dialog-footer {
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 10px 20px;
 }
 .ui-dialog-statusbar {
     float: left;
@@ -138,7 +138,7 @@
     margin-left: 5px;
 }
 .ui-dialog-footer button {
-    width:auto;
+    width:80px;
     overflow:visible;
     display: inline-block;
     padding: 6px 12px;

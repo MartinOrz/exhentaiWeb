@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>标签编辑</title>
+    <link rel="stylesheet" type="text/css" href="../../static/css/tagEditStyle.css" />
 </head>
 <body>
-
+<table>
+    <tbody>
+        <tr class="te">
+            <td class="tdl">标签名称:</td><td class="tdr"><span id="te_name">{{ name }}</span></td>
+        </tr>
+        <tr class="te">
+            <td class="tdl">标签类型:</td><td class="tdr"><span id="te_type"/>{{ type }}</td>
+        </tr>
+        <tr class="te">
+            <td class="tdl">中文名称:</td><td class="tdr"><input id="te_text" value="{{ text }}"></td>
+        </tr>
+        <tr class="te">
+            <td class="tdl" style="vertical-align: top">标签说明:</td><td class="tdr"><textarea id="te_info">{{ info }}</textarea></td>
+        </tr>
+    </tbody>
+</table>
 </body>
 </html>
