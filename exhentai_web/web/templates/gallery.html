@@ -5,6 +5,7 @@
 <title>{{ title }}</title>
 <link rel="stylesheet" type="text/css" href="../../static/css/style.css" />
 <link rel="stylesheet" type="text/css" href="../../static/css/ui-dialog.css" />
+<link rel="stylesheet" type="text/css" href="../../static/css/tagEditStyle.css" />
 <script type="text/javascript" src="../../static/js/lib/jquery-3.1.0.min.js"></script>
 <script type="text/javascript" src="../../static/js/dialog-plus-min.js"></script>
 <script type="text/javascript" src="../../static/js/common.js"></script>
@@ -134,7 +135,8 @@
                     filter.tag = $("#filter_tag").val()
                     filter.status = $("#filter_status").val()
                     window.location.href = get_base_url() + "?" + get_params(now)
-                }
+                },
+                cancel: function() {}
             });
             d.showModal();
         });
@@ -151,7 +153,7 @@
                             $.ajax({
 				                url: "http://{{ host }}:8080/tag/" + tid + "/",
 				                type: 'POST',
-				                data: "text=" + $("input#te_text").val(),
+				                data: "text=" + $("input#te_text").val() + "&info=" + $("textarea#te_info").val(),
 				                success: function(response){
 					                if (response.success) {
 					                    window.location.href = get_base_url() + "?" + get_params(now)
@@ -167,6 +169,40 @@
 				}
 			});
         });
+        $("a.aa").click(function(){
+            var aid = $(this).attr("id").split("_")[1]
+            $.ajax({
+				url: "/author/" + aid + "/",
+				type: 'GET',
+				success: function(response){
+					var d = dialog({
+                        title: '作者编辑',
+                        content: response,
+                        ok: function() {
+
+                        },
+                        cancel: function() {}
+                    });
+                    d.showModal();
+
+                    $("input#ta_refer").bind('input propertychange', function() {
+                        var ol = document.createElement("ol");
+                        ol.style.position = "fixed";
+                        ol.style.top = "200px";
+                        ol.style.left = "200px";
+                        ol.style.width = "200px";
+                        ol.style.height = "200px";
+                        ol.style.background = "#fff";
+                        ol.style.zIndex = "1000";
+                        var li1 = document.createElement("li");
+                        li1.innerHtml = "test";
+                        ol.appendChild(li1);
+                        ol.appendTo($(".ui-dialog"));
+                    });
+				}
+			});
+        });
+
     });
 </script>
 </head>
@@ -246,7 +282,7 @@
                         <td class="tagtdr">
                             {% for character in characters %}
                             <div class="tag" style="opacity:1.0">
-                                <a id="tag_{{ character.id }}" title="{% if character.text %}{{ character.text }}{% else %}未翻译{% endif %}">{{ character.name }}</a>
+                                <a class="at" id="tag_{{ character.id }}" title="{% if character.text %}{{ character.text }}{% else %}未翻译{% endif %}">{{ character.name }}</a>
                             </div>
                             {% endfor %}
                         </td>
@@ -258,7 +294,7 @@
                         <td class="tagtdr">
                             {% for parody in parodies %}
                             <div class="tag" style="opacity:1.0">
-                                <a id="tag_{{ parody.id }}" title="{% if parody.text %}{{ parody.text }}{% else %}未翻译{% endif %}">{{ parody.name }}</a>
+                                <a class="at" id="tag_{{ parody.id }}" title="{% if parody.text %}{{ parody.text }}{% else %}未翻译{% endif %}">{{ parody.name }}</a>
                             </div>
                             {% endfor %}
                         </td>
@@ -321,38 +357,23 @@
 <div id="filter_dialog" style="display: none">
     <table>
         <tbody>
-            <tr>
-                <td>团体:</td><td><input id="filter_group"></td>
+            <tr class="te">
+                <td class="te_tdl">同人团体:</td><td class="te_tdl"><input id="filter_group"></td>
             </tr>
-            <tr>
-                <td>作者:</td><td><input id="filter_author"></td>
+            <tr class="te">
+                <td class="te_tdl">画集作者:</td><td class="te_tdl"><input id="filter_author"></td>
             </tr>
-            <tr>
-                <td>角色:</td><td><input id="filter_character"></td>
+            <tr class="te">
+                <td class="te_tdl">包含角色:</td><td class="te_tdl"><input id="filter_character"></td>
             </tr>
-            <tr>
-                <td>同人:</td><td><input id="filter_parody"></td>
+            <tr class="te">
+                <td class="te_tdl">同人作品:</td><td class="te_tdl"><input id="filter_parody"></td>
             </tr>
-            <tr>
-                <td>标签:</td><td><input id="filter_tag"></td>
+            <tr class="te">
+                <td class="te_tdl">画集标签:</td><td class="te_tdl"><input id="filter_tag"></td>
             </tr>
-            <tr>
-                <td>状态:</td><td><input id="filter_status"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div id="tag_edit_dialog" style="display: none">
-    <table>
-        <tbody>
-            <tr>
-                <td>标签名称:</td><td><span id="te_name"/></td>
-            </tr>
-            <tr>
-                <td>标签类型:</td><td><span id="te_type"/></td>
-            </tr>
-            <tr>
-                <td>中文名称:</td><td><input id="te_text" style="width:200px"></td>
+            <tr class="te">
+                <td class="te_tdl">画集状态:</td><td class="te_tdl"><input id="filter_status"></td>
             </tr>
         </tbody>
     </table>

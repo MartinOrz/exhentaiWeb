@@ -89,6 +89,14 @@ tag_types = {
     'parody': 4,
 }
 
+display_tag_types = {
+    0: '男性标签',
+    1: '女性标签',
+    2: '其他标签',
+    3: '角色标签',
+    4: '同人作品标签',
+}
+
 
 class ExGallery(models.Model):
     """
@@ -310,7 +318,7 @@ class ExTag(models.Model):
         result['name'] = self.name
         result['text'] = self.text
         result['info'] = self.info
-        result['type'] = self.type
+        result['type'] = display_tag_types[self.type]
         return result
 
     @staticmethod

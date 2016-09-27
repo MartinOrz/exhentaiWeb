@@ -91,11 +91,12 @@
     margin: 0;
     line-height: 1.428571429;
     min-height: 16.428571429px;
-    padding: 15px;
+    padding: 10px 20px 10px 20px;
     overflow:hidden; 
     white-space: nowrap;
     text-overflow: ellipsis;
     font-weight: bold;
+    font-size: 12pt;
     cursor: default;
 }
 .ui-dialog-body {

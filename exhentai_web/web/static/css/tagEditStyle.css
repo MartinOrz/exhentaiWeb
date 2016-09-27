@@ -3,7 +3,7 @@ tr.te {
     padding: 2px;
 }
 
-td.tdl {
+td.te_tdl {
     width: 80px;
     height: 26px;
     vertical-align: center;
@@ -13,7 +13,7 @@ td.tdl {
     font-size: 12pt;
 }
 
-td.tdr {
+td.te_tdr {
     width: 300px;
     font-size: 12pt;
 }
