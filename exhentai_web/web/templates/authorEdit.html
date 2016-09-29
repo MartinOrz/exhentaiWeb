@@ -1,8 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<meta charset="UTF-8">
+<title>Title</title>
+<script type="text/javascript">
+    $(document).ready(function() {
+        //json数据包
+        var data = {
+            data: []
+        };
+
+        //获取后面需要多次调用的dom对象
+        var $hintSearch = $("input[name='hint-search']");
+        var $hintSearchContainer = $(".hint-input-container");
+        var $hintBlock = $(".hint-block");
+        var $hintUl = $(".hint-ul");
+
+        //初次调用添加词典
+        addDictionary(data.data, addUlListener);
+
+        //获得焦点
+        $hintSearch.focus(function() {
+            animteDown();
+        });
+
+        //失去焦点
+        //设置延迟为了可以监听到click的响应
+        $hintSearch.blur(function() {
+            setTimeout(function() {
+                animateUp();
+            },
+            200);
+        });
+
+        //检测输入配对
+        //对输入内容在li中进行匹配 如果包含字符串可以找到并返回
+        //搜索方法可以自行修改，只要保证返回一个搜索后的数组即可
+        $hintSearch.keyup(function(e) {
+            var text = $hintSearch.val();
+            if ($.trim(text)) { // 不为空
+                $.ajax({
+				    url: "/author/?name=" + text,
+				    type: 'GET',
+				    success: function(response){
+				        if (response.success) {
+				            var tmparr = response.data
+					        if (tmparr.length === 0) {
+					            tmparr.push("无匹配条目");
+					            updateDictionary(tmparr, clearUlListener);
+					        } else {
+					            updateDictionary(tmparr, addUlListener);
+					        }
+				        } else {
+				            var tmparr = ['请求错误']
+				            updateDictionary(tmparr, clearUlListener);
+				        }
+				    }
+			    });
+            }
+        })
+
+        //函数库
+        //添加用户常用字典库
+        function addDictionary(dataarr, callback) {
+            for (var i = 0; i < dataarr.length; i++) {
+                $hintUl.append('<li>' + dataarr[i] + '</li>');
+            }
+            callback();
+        }
+
+        //更新搜索内容
+        function updateDictionary(dataarr, callback) {
+            $hintUl.empty();
+            addDictionary(dataarr, callback);
+        }
+
+        //向下滑动动画
+        //封装改变样式边框
+        function animteDown() {
+            $hintBlock.slideDown('fast').css({
+                'border': '1px solid #96C8DA',
+                'border-top': '0px',
+                'box-shadow': '0 2px 3px 0 rgba(34,36,38,.15)'
+            });
+            $hintSearchContainer.css({
+                'border': '1px solid #96C8DA',
+                'border-bottom': '0px',
+                'box-shadow': '0 2px 3px 0 rgba(34,36,38,.15)'
+            });
+        }
+
+        //向上滑动动画
+        function animateUp() {
+            $hintBlock.slideUp('fast',
+            function() {
+                $hintSearchContainer.css({
+                    'border': '1px solid #ccc'
+                });
+            });
+        }
+
+        //绑定click事件
+        function addUlListener() {
+            $hintUl.delegate('li', 'click',
+            function() {
+                $hintSearch.val($(this).text());
+                animateUp();
+            })
+        }
+
+        function clearUlListener() {
+            $hintUl.delegate('li', 'click',
+            function() {})
+        }
+    });
+</script>
 </head>
 <body>
 <table>
@@ -14,10 +126,19 @@
             <td class="te_tdl">中文名称:</td><td class="te_tdr"><input id="ta_text" value="{{ text }}"></td>
         </tr>
         <tr class="te">
-            <td class="te_tdl">作者评分:</td><td class="te_tdr"><input id="ta_rating" value="{{ text }}"/></td>
+            <td class="te_tdl">作者评分:</td><td class="te_tdr"><input id="ta_rating" value="{{ rating }}"/></td>
         </tr>
         <tr class="te">
-            <td class="te_tdl">关联作者:</td><td class="te_tdr"><input id="ta_refer" value="{{ refer }}"/></td>
+            <td class="te_tdl">关联作者:</td><td class="te_tdr">
+                <div class="hint-input-container">
+                    <!-- 表单元素 用来绑定监听事件以及接收用户输入 -->
+                    <input type="text" id="ta_refer" name="hint-search" value="" placeholder="选定关键字或按下tab或按下enter来分割关键字">
+                </div>
+                <div class="hint-block">
+                    <!-- 包含下拉列表列 -->
+                    <ul class="hint-ul"></ul>
+                </div>
+            </td>
         </tr>
     </tbody>
 </table>

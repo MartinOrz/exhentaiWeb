@@ -34,7 +34,13 @@ urlpatterns = [
     url(r'^import/$', views.import_galleries),
 
     # 作者
-    url(r'^author/(\d+)/$', views.method_dispatch(GET=views.get_author), name='author'),
+    url(r'^author/$', views.method_dispatch(GET=views.get_author_by_name), name='get_author_by_name'),
+    url(r'^author/(\d+)/$', views.method_dispatch(GET=views.get_author,
+                                                  POST=views.update_author), name='get_author'),
+
+    # 团体
+    url(r'^group/(\d+)/$', views.method_dispatch(GET=views.get_group,
+                                                 POST=views.update_group), name='get_group'),
 
     # 标签
     url(r'^tag/(\d+)/$', views.method_dispatch(GET=views.get_tag,

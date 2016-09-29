@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="../../static/css/style.css" />
 <link rel="stylesheet" type="text/css" href="../../static/css/ui-dialog.css" />
 <link rel="stylesheet" type="text/css" href="../../static/css/tagEditStyle.css" />
+<link rel="stylesheet" type="text/css" href="../../static/css/authorEditStyle.css" />
 <script type="text/javascript" src="../../static/js/lib/jquery-3.1.0.min.js"></script>
 <script type="text/javascript" src="../../static/js/dialog-plus-min.js"></script>
 <script type="text/javascript" src="../../static/js/common.js"></script>
@@ -111,7 +112,7 @@
             $.ajax({
 				url: window.location.href,
 				type: 'POST',
-				data: "rating=" + getDefaultValue($("input#rating").val()) + "&translator=" + getDefaultValue($("input#translator").val()),
+				data: "rating=" + $("input#rating").val() + "&translator=" + $("input#translator").val(),
 				success: function(response){
 					if (response.success) {
 					    window.location.href = get_base_url() + "?" + get_params(now)
@@ -179,30 +180,54 @@
                         title: '作者编辑',
                         content: response,
                         ok: function() {
-
+                            $.ajax({
+				                url: "http://{{ host }}:8080/author/" + aid + "/",
+				                type: 'POST',
+				                data: "text=" + $("input#ta_text").val() + "&rating=" + $("input#ta_rating").val() + "&refer=" + $("input#ta_refer").val(),
+				                success: function(response){
+					                if (response.success) {
+					                    window.location.href = get_base_url() + "?" + get_params(now)
+					                } else {
+					                    alert("修改失败！")
+					                }
+				                }
+			                });
                         },
                         cancel: function() {}
                     });
                     d.showModal();
-
-                    $("input#ta_refer").bind('input propertychange', function() {
-                        var ol = document.createElement("ol");
-                        ol.style.position = "fixed";
-                        ol.style.top = "200px";
-                        ol.style.left = "200px";
-                        ol.style.width = "200px";
-                        ol.style.height = "200px";
-                        ol.style.background = "#fff";
-                        ol.style.zIndex = "1000";
-                        var li1 = document.createElement("li");
-                        li1.innerHtml = "test";
-                        ol.appendChild(li1);
-                        ol.appendTo($(".ui-dialog"));
-                    });
 				}
 			});
         });
-
+        $("a.ag").click(function(){
+            var gid = $(this).attr("id").split("_")[1]
+            $.ajax({
+				url: "/group/" + gid + "/",
+				type: 'GET',
+				success: function(response){
+					var d = dialog({
+                        title: '同人团体编辑',
+                        content: response,
+                        ok: function() {
+                            $.ajax({
+				                url: "http://{{ host }}:8080/group/" + gid + "/",
+				                type: 'POST',
+				                data: "text=" + $("input#tg_text").val() + "&rating=" + $("input#tg_rating").val(),
+				                success: function(response){
+					                if (response.success) {
+					                    window.location.href = get_base_url() + "?" + get_params(now)
+					                } else {
+					                    alert("修改失败！")
+					                }
+				                }
+			                });
+                        },
+                        cancel: function() {}
+                    });
+                    d.showModal();
+				}
+			});
+        });
     });
 </script>
 </head>
@@ -270,7 +295,7 @@
                         <td class="tagtdr">
                             {% for group in groups %}
                             <div class="tag" style="opacity:1.0">
-                                <a title="{% if group.text %}{{ group.text }}{% else %}未翻译{% endif %}">{{ group.name }}</a>
+                                <a id="group_{{ group.id }}" class="ag" title="{% if group.text %}{{ group.text }}{% else %}未翻译{% endif %}">{{ group.name }}</a>
                             </div>
                             {% endfor %}
                         </td>
@@ -330,7 +355,7 @@
                         <td class="tagtdr">
                             {% for tag in misc_tags %}
                             <div class="tag" style="opacity:1.0">
-                                <a title="其他:{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
+                                <a class="at" id="tag_{{ tag.id }}" title="其他:{% if tag.text %}{{ tag.text }}{% else %}未翻译{% endif %}">{{ tag.name }}</a>
                             </div>
                             {% endfor %}
                         </td>

@@ -27,8 +27,8 @@ import socket
 
 
 # 一些常量的定义 =========================================================================================================
-IMPORT_DICT = r'e:\import'
-DST_DICT = r'e:\comic'
+IMPORT_DICT = r'g:\import'
+DST_DICT = r'g:\comic'
 MAX_INSERT = 100
 STATICFILES_DIRS = settings.STATICFILES_DIRS[0]
 IP = socket.gethostbyname(socket.gethostname())
@@ -471,8 +471,15 @@ class ImportTask(threading.Thread):
             _import_galleries(imports)
 
 
-# 作者的相关请求
+# 作者的相关请求 =========================================================================================================
 def get_author(request, a):
+    """
+    根据id获取作者，返回一个html页面
+
+    :param request: 请求
+    :param a: 作者id
+    :return: 作者信息html页面
+    """
     try:
         aid = int(a)
         author = ExAuthor.objects.get(id=aid)
@@ -483,6 +490,86 @@ def get_author(request, a):
         else:
             result['refer'] = ''
         return render(request, 'authorEdit.html', result)
+    except Exception as e:
+        return _get_error_json(None)
+
+
+@transaction.atomic
+def update_author(request, a):
+    """
+    根据id更新作者信息
+
+    :param request: 更新请求
+    :param a: 作者id
+    :return: 是否成功
+    """
+    try:
+        aid = int(a)
+        author = ExAuthor.objects.get(id=aid)
+        if 'text' in request.POST and request.POST['text'].strip():
+            author.text = request.POST['text']
+        if 'rating' in request.POST and request.POST['rating'].strip():
+            author.rating = int(request.POST['rating'])
+        if 'refer' in request.POST and request.POST['refer'].strip():
+            author.refer = int(request.POST['refer'])
+        author.save()
+        return _get_success_json(None)
+    except Exception as e:
+        return _get_error_json(None)
+
+
+def get_author_by_name(request):
+    """
+    根据名称的前几个字母查询符合条件的作者
+
+    :param request: 请求，必须包含name
+    :return: 获取到的作者列表，id:name形式
+    """
+    try:
+        if 'name' in request.GET and request.GET['name'].strip():
+            result = ExAuthor.objects.filter(name__startswith=request.GET['name'])
+            return _get_success_json(["{:0>4} : {}".format(res.id, res.name) for res in result])
+        else:
+            return _get_success_json([])
+    except Exception as e:
+        return _get_error_json(None)
+
+
+# 团体相关请求 ===========================================================================================================
+def get_group(request, g):
+    """
+    根据id获取一个同人团体的信息
+
+    :param request: 请求
+    :param g: 团体id
+    :return: 包含同人团体信息的页面
+    """
+    try:
+        gid = int(g)
+        group = ExGroup.objects.get(id=gid)
+        return render(request, 'groupEdit.html', group.to_dict())
+    except Exception as e:
+        return _get_error_json(None)
+
+
+@transaction.atomic
+def update_group(request, g):
+    """
+    更新一个标签
+
+    :param request: 请求
+    :param t: 标签id
+    :return: 是否成功
+    """
+    try:
+        gid = int(g)
+        group = ExGroup.objects.get(id=gid)
+        if 'text' in request.POST and request.POST['text'].strip():
+            group.text = request.POST['text'].strip()
+        if 'rating' in request.POST and request.POST['rating'].strip():
+            group.rating = int(request.POST['rating'])
+        group.save()
+        return _get_success_json(None)
     except Exception as e:
         return _get_error_json(None)
 
